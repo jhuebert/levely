@@ -9,7 +9,6 @@ import (
 	"github.com/jhuebert/levely/service"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -26,6 +25,11 @@ func main() {
 	flag.StringVar(&configPath, "c", "", "path to the config file")
 	flag.StringVar(&dbPath, "d", "levely.db", "path to the database file")
 	flag.Parse()
+
+	logFormatter := new(logrus.TextFormatter)
+	logFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	logFormatter.FullTimestamp = true
+	logrus.SetFormatter(logFormatter)
 
 	if configPath != "" {
 		viper.SetConfigFile(configPath)
@@ -95,10 +99,13 @@ func main() {
 		logrus.Error(err)
 	}
 
+	logrus.Infof("closing database connection")
+	r.Close()
+
 	// Optionally, you could run srv.Shutdown in a goroutine and block on
 	// <-ctx.Done() if your application should wait for other services
 	// to finalize based on context cancellation.
-	log.Println("shutting down")
+	logrus.Info("shutting down")
 	os.Exit(0)
 }
 

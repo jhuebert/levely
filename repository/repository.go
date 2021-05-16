@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/asdine/storm/v3"
+import (
+	"github.com/asdine/storm/v3"
+	"github.com/sirupsen/logrus"
+)
 
 type Repository struct {
 	db *storm.DB
@@ -15,6 +18,9 @@ func (r *Repository) Get(bucketName string, key interface{}, to interface{}) err
 	return r.db.Get(bucketName, key, to)
 }
 
-//func init(db *storm.DB) {
-//	db.
-//}
+func (r *Repository) Close() {
+	err := r.db.Close()
+	if err != nil {
+		logrus.Warnf("error encountered when closing database: %v", err)
+	}
+}
