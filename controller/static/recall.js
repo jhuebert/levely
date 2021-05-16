@@ -9,11 +9,11 @@ function updateAxis(preferences, dimension, prefix, value) {
         right.innerHTML = ''
         value = 0.0
     } else if (value < 0) {
-        left.innerHTML = '&darr;' //&#9660;
-        right.innerHTML = '&uarr;' //&#9650;
+        left.innerHTML = '&#9660;'
+        right.innerHTML = '&#9650;'
     } else {
-        left.innerHTML = '&uarr;'
-        right.innerHTML = '&darr;'
+        left.innerHTML = '&#9650;'
+        right.innerHTML = '&#9660;'
     }
 
     document.getElementById(prefix + 'ProgressId').innerHTML = createProgress(value)
