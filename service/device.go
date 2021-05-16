@@ -26,6 +26,11 @@ func (s *Service) GetUncorrected() repository.Position {
 	var p repository.Position
 	var accel Acceleration
 
+	if s.d == nil {
+		logrus.Debug("returning zero data since driver is not set")
+		return p
+	}
+
 	select {
 	case accel = <-s.c:
 		logrus.Debug("received acceleration data")
