@@ -10,7 +10,7 @@ import (
 func (s *Service) getDefaultPreferences() repository.Preferences {
 	return repository.Preferences{
 		ID:                     repository.PreferencesId,
-		Version:                "0.0.1",
+		Version:                1,
 		DimensionLength:        240,
 		DimensionWidth:         96,
 		DimensionUnits:         repository.UnitInches,
@@ -19,9 +19,9 @@ func (s *Service) getDefaultPreferences() repository.Preferences {
 		OrientationInvertPitch: false,
 		OrientationInvertRoll:  false,
 		LevelTolerance:         0.1,
-		DisplayRate:            4,
+		DisplayRate:            8,
 		AccelerometerSmoothing: 1000,
-		AccelerometerRate:      100,
+		AccelerometerRate:      250,
 	}
 }
 
