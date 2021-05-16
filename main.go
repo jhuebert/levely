@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/jhuebert/levely/config"
 	"github.com/jhuebert/levely/controller"
 	"github.com/jhuebert/levely/repository"
 	"github.com/jhuebert/levely/service"
@@ -34,9 +35,9 @@ func main() {
 			return
 		}
 
-		level, err := logrus.ParseLevel(viper.GetString(LogLevel))
+		level, err := logrus.ParseLevel(viper.GetString(config.LogLevel))
 		if err != nil {
-			logrus.Warnf("Invalid input log level \"%v\". Can be one of trace, debug, info, warn, error, fatal, panic. Setting log level to info", viper.GetString(LogLevel))
+			logrus.Warnf("Invalid input log level \"%v\". Can be one of trace, debug, info, warn, error, fatal, panic. Setting log level to info", viper.GetString(config.LogLevel))
 			level = logrus.InfoLevel
 		}
 		logrus.SetLevel(level)
@@ -62,10 +63,10 @@ func main() {
 	// Define the REST server
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         viper.GetString(ServerAddress),
-		WriteTimeout: viper.GetDuration(ServerWriteTimeout) * time.Millisecond,
-		ReadTimeout:  viper.GetDuration(ServerReadTimeout) * time.Millisecond,
-		IdleTimeout:  viper.GetDuration(ServerIdleTimeout) * time.Millisecond,
+		Addr:         viper.GetString(config.ServerAddress),
+		WriteTimeout: viper.GetDuration(config.ServerWriteTimeout) * time.Millisecond,
+		ReadTimeout:  viper.GetDuration(config.ServerReadTimeout) * time.Millisecond,
+		IdleTimeout:  viper.GetDuration(config.ServerIdleTimeout) * time.Millisecond,
 	}
 
 	// Run our server in a goroutine so that it doesn't block.
@@ -84,7 +85,7 @@ func main() {
 	<-c
 
 	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(ServerStopTimeout)*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(config.ServerStopTimeout)*time.Millisecond)
 	defer cancel()
 
 	// Doesn't block if no connections, but will otherwise wait
@@ -110,7 +111,7 @@ func getDriver() *i2c.MPU6050Driver {
 		return nil
 	}
 
-	d := i2c.NewMPU6050Driver(adaptor, i2c.WithBus(viper.GetInt(DeviceI2CBus)), i2c.WithAddress(viper.GetInt(DeviceI2CAddress)))
+	d := i2c.NewMPU6050Driver(adaptor, i2c.WithBus(viper.GetInt(config.DeviceI2CBus)), i2c.WithAddress(viper.GetInt(config.AccelerometerI2CAddress)))
 	err = d.Start()
 	if err != nil {
 		logrus.Errorf("could not communicate with accelerometer: %v", err)

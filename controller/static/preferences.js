@@ -77,7 +77,7 @@ async function displayPreferences(matches, div) {
             <div class="form-group row align-items-center">
                 <label class="col-sm-2 col-form-label col-form-label-lg text-light">Accelerometer Smoothing</label>
                 <div class="col-sm-10" id="accelerometerSmoothingId">
-                    ${createNumberInput(preferences.accelerometerRate)}
+                    ${createNumberInput(preferences.accelerometerSmoothing)}
                 </div>
             </div>
             <button type="button" class="btn btn-lg btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>

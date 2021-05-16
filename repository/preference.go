@@ -4,7 +4,7 @@ type Unit string
 type Axis string
 
 type Preferences struct {
-	ID                     int     `storm:"id" json:"-"`
+	ID                     int     `storm:"id" json:"id"`
 	Version                string  `json:"version"`
 	DimensionLength        float64 `json:"dimensionLength"`
 	DimensionWidth         float64 `json:"dimensionWidth"`
