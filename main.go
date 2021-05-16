@@ -52,6 +52,8 @@ func main() {
 		return
 	}
 
+	//TODO Migrate DB
+
 	d := getDriver()
 	s := service.New(r, d)
 	rc := controller.New(s)
@@ -104,14 +106,14 @@ func getDriver() *i2c.MPU6050Driver {
 	adaptor := raspi.NewAdaptor()
 	err := adaptor.Connect()
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("could not connect to Raspberry Pi I2C bus: %v", err)
 		return nil
 	}
 
 	d := i2c.NewMPU6050Driver(adaptor, i2c.WithBus(viper.GetInt(DeviceI2CBus)), i2c.WithAddress(viper.GetInt(DeviceI2CAddress)))
 	err = d.Start()
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("could not communicate with accelerometer: %v", err)
 		return nil
 	}
 

@@ -4,24 +4,19 @@ type Unit string
 type Axis string
 
 type Preferences struct {
-	ID          int                    `storm:"id" json:"-"`
-	Dimensions  DimensionPreferences   `storm:"inline" json:"dimensions"`
-	Tolerance   float64                `json:"tolerance"`
-	UpdateRate  float64                `json:"updateRate"`
-	Orientation OrientationPreferences `storm:"inline" json:"orientation"`
-}
-
-type DimensionPreferences struct {
-	Length float64 `json:"length"`
-	Width  float64 `json:"width"`
-	Units  Unit    `json:"units"`
-}
-
-type OrientationPreferences struct {
-	Length      Axis `json:"length"`
-	Width       Axis `json:"width"`
-	InvertPitch bool `json:"invertPitch"`
-	InvertRoll  bool `json:"invertRoll"`
+	ID                     int     `storm:"id" json:"-"`
+	Version                string  `json:"version"`
+	DimensionLength        float64 `json:"dimensionLength"`
+	DimensionWidth         float64 `json:"dimensionWidth"`
+	DimensionUnits         Unit    `json:"dimensionUnits"`
+	OrientationPitch       Axis    `json:"orientationPitch"`
+	OrientationRoll        Axis    `json:"orientationRoll"`
+	OrientationInvertPitch bool    `json:"orientationInvertPitch"`
+	OrientationInvertRoll  bool    `json:"orientationInvertRoll"`
+	LevelTolerance         float64 `json:"levelTolerance"`
+	DisplayRate            float64 `json:"displayRate"`
+	AccelerometerSmoothing float64 `json:"accelerometerSmoothing"`
+	AccelerometerRate      float64 `json:"accelerometerRate"`
 }
 
 const (
@@ -43,7 +38,6 @@ func (r *Repository) GetPreferences() (Preferences, error) {
 }
 
 func (r *Repository) UpdatePreferences(updated Preferences) (Preferences, error) {
-	updated.ID = PreferencesId
 	err := r.db.Save(&updated)
 	return updated, err
 }

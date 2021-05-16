@@ -1,11 +1,7 @@
 
 async function displayPreferences(matches, div) {
 
-    let preferences = await getUrl('api/preference')
-
-    if (validatePreferences(preferences)) {
-        preferences = createDefaultPreferences()
-    }
+    const preferences = await getUrl('api/preference')
 
     div.innerHTML = `
         <div class="container h-100">
@@ -14,63 +10,75 @@ async function displayPreferences(matches, div) {
             <div class="form-group row align-items-center">
                 <label class="col-sm-2 col-form-label col-form-label-lg text-light">Width</label>
                 <div class="col-sm-10" id="dimensionWidthId">
-                    ${createNumberInput(preferences.dimensions.width)}
+                    ${createNumberInput(preferences.dimensionWidth)}
                 </div>
             </div>
             <div class="form-group row align-items-center">
                 <label class="col-sm-2 col-form-label col-form-label-lg text-light">Length</label>
                 <div class="col-sm-10" id="dimensionLengthId">
-                    ${createNumberInput(preferences.dimensions.length)}
+                    ${createNumberInput(preferences.dimensionLength)}
                 </div>
             </div>
             <div class="form-group row align-items-center">
                 <label class="col-sm-2 col-form-label col-form-label-lg text-light">Units</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="dimensionUnitsId" >
-                        <option value="in" ${preferences.dimensions.units === 'in' ? 'selected' : ''}>Inches</option>
-                        <option value="cm" ${preferences.dimensions.units === 'cm' ? 'selected' : ''}>Centimeters</option>
+                        <option value="in" ${preferences.dimensionUnits === 'in' ? 'selected' : ''}>Inches</option>
+                        <option value="cm" ${preferences.dimensionUnits === 'cm' ? 'selected' : ''}>Centimeters</option>
                     </select>
                 </div>
             </div>
             <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Width Axis</label>
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Roll Axis</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="orientationWidthId" >
-                        <option id="orientationWidthIdX"  value="x" ${preferences.orientation.width === 'x' ? 'selected' : ''}>X</option>
-                        <option id="orientationWidthIdY"  value="Y" ${preferences.orientation.width === 'y' ? 'selected' : ''}>Y</option>
-                        <option id="orientationWidthIdZ"  value="Z" ${preferences.orientation.width === 'z' ? 'selected' : ''}>Z</option>
+                    <select class="form-control">
+                        <option id="orientationRollIdX"  value="x" ${preferences.orientationRoll === 'x' ? 'selected' : ''}>X</option>
+                        <option id="orientationRollIdY"  value="Y" ${preferences.orientationRoll === 'y' ? 'selected' : ''}>Y</option>
+                        <option id="orientationRollIdZ"  value="Z" ${preferences.orientationRoll === 'z' ? 'selected' : ''}>Z</option>
                     </select>
                 </div>
             </div>
             <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Length Axis</label>
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Pitch Axis</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="orientationLengthId" >
-                        <option id="orientationLengthIdX"  value="x" ${preferences.orientation.length === 'x' ? 'selected' : ''}>X</option>
-                        <option id="orientationLengthIdY"  value="Y" ${preferences.orientation.length === 'y' ? 'selected' : ''}>Y</option>
-                        <option id="orientationLengthIdZ"  value="Z" ${preferences.orientation.length === 'z' ? 'selected' : ''}>Z</option>
+                    <select class="form-control">
+                        <option id="orientationPitchIdX"  value="x" ${preferences.orientationPitch === 'x' ? 'selected' : ''}>X</option>
+                        <option id="orientationPitchIdY"  value="Y" ${preferences.orientationPitch === 'y' ? 'selected' : ''}>Y</option>
+                        <option id="orientationPitchIdZ"  value="Z" ${preferences.orientationPitch === 'z' ? 'selected' : ''}>Z</option>
                     </select>
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Tolerance</label>
-                <div class="col-sm-10" id="toleranceId">
-                    ${createNumberInput(preferences.tolerance)}
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Update Rate</label>
-                <div class="col-sm-10" id="updateRateId">
-                    ${createNumberInput(preferences.updateRate)}
                 </div>
             </div>
             <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="orientationInvertRollId" ${preferences.orientation.invertRoll ? 'checked' : ''}>
+              <input type="checkbox" class="custom-control-input" id="orientationInvertRollId" ${preferences.orientationInvertRoll ? 'checked' : ''}>
               <label class="custom-control-label text-light h5" for="orientationInvertRollId">Invert Roll</label>
             </div>
             <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="orientationInvertPitchId" ${preferences.orientation.invertPitch ? 'checked' : ''}>
+              <input type="checkbox" class="custom-control-input" id="orientationInvertPitchId" ${preferences.orientationInvertPitch ? 'checked' : ''}>
               <label class="custom-control-label text-light h5" for="orientationInvertPitchId">Invert Pitch</label>
+            </div>
+            <div class="form-group row align-items-center">
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Level Tolerance</label>
+                <div class="col-sm-10" id="levelToleranceId">
+                    ${createNumberInput(preferences.levelTolerance)}
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Display Rate</label>
+                <div class="col-sm-10" id="displayRateId">
+                    ${createNumberInput(preferences.displayRate)}
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Accelerometer Rate</label>
+                <div class="col-sm-10" id="accelerometerRateId">
+                    ${createNumberInput(preferences.accelerometerRate)}
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Accelerometer Smoothing</label>
+                <div class="col-sm-10" id="accelerometerSmoothingId">
+                    ${createNumberInput(preferences.accelerometerRate)}
+                </div>
             </div>
             <button type="button" class="btn btn-lg btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
             <!-- TODO Add button to export the database -->
@@ -78,43 +86,28 @@ async function displayPreferences(matches, div) {
     `;
 }
 
-function createDefaultPreferences() {
-    return {
-        dimensions: {
-            width: 96.0,
-            length: 240.0,
-            units: "in",
-        },
-        orientation: {
-            length: "y",
-            width: "x",
-            invertPitch: false,
-            invertRoll: false
-        },
-        tolerance: 0.1,
-        updateRate: 1.0
-    }
-}
-
 async function savePreferences() {
 
-    const preferences = createDefaultPreferences()
-    preferences.dimensions.width = parseFloat(document.getElementById('dimensionWidthId').firstElementChild.value)
-    preferences.dimensions.length = parseFloat(document.getElementById('dimensionLengthId').firstElementChild.value)
-    preferences.dimensions.units = document.getElementById('dimensionUnitsId').value
-    preferences.tolerance = parseFloat(document.getElementById('toleranceId').firstElementChild.value)
-    preferences.updateRate = parseFloat(document.getElementById('updateRateId').firstElementChild.value)
+    const preferences = {}
+    preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthId').firstElementChild.value)
+    preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthId').firstElementChild.value)
+    preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
 
-    preferences.orientation.width = document.getElementById('orientationWidthIdX').selected ? 'x' : preferences.orientation.width
-    preferences.orientation.width = document.getElementById('orientationWidthIdY').selected ? 'y' : preferences.orientation.width
-    preferences.orientation.width = document.getElementById('orientationWidthIdZ').selected ? 'z' : preferences.orientation.width
+    preferences.orientationRoll = document.getElementById('orientationRollIdX').selected ? 'x' : preferences.orientationRoll
+    preferences.orientationRoll = document.getElementById('orientationRollIdY').selected ? 'y' : preferences.orientationRoll
+    preferences.orientationRoll = document.getElementById('orientationRollIdZ').selected ? 'z' : preferences.orientationRoll
 
-    preferences.orientation.length = document.getElementById('orientationLengthIdX').selected ? 'x' : preferences.orientation.length
-    preferences.orientation.length = document.getElementById('orientationLengthIdY').selected ? 'y' : preferences.orientation.length
-    preferences.orientation.length = document.getElementById('orientationLengthIdZ').selected ? 'z' : preferences.orientation.length
+    preferences.orientationPitch = document.getElementById('orientationPitchIdX').selected ? 'x' : preferences.orientationPitch
+    preferences.orientationPitch = document.getElementById('orientationPitchIdY').selected ? 'y' : preferences.orientationPitch
+    preferences.orientationPitch = document.getElementById('orientationPitchIdZ').selected ? 'z' : preferences.orientationPitch
 
-    preferences.orientation.invertRoll = document.getElementById('orientationInvertRollId').checked
-    preferences.orientation.invertPitch = document.getElementById('orientationInvertPitchId').checked
+    preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
+    preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
+
+    preferences.levelTolerance = parseFloat(document.getElementById('levelToleranceId').firstElementChild.value)
+    preferences.displayRate = parseFloat(document.getElementById('displayRateId').firstElementChild.value)
+    preferences.accelerometerRate = parseFloat(document.getElementById('accelerometerRateId').firstElementChild.value)
+    preferences.accelerometerSmoothing = parseFloat(document.getElementById('accelerometerSmoothingId').firstElementChild.value)
 
     console.log(preferences)
 
@@ -131,32 +124,40 @@ async function savePreferences() {
 
 function validatePreferences(preferences) {
 
-    if (!preferences.dimensions.width || (preferences.dimensions.width <= 0.0)) {
+    if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
         return 'Width must be greater than zero'
     }
 
-    if (!preferences.dimensions.length || (preferences.dimensions.length <= 0.0)) {
+    if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
         return 'Length must be greater than zero'
     }
 
-    if (!preferences.tolerance || (preferences.tolerance <= 0.0)) {
-        return 'Tolerance must be greater than zero'
+    if (!preferences.dimensionUnits) {
+        return 'Dimension unit not specified'
     }
 
-    if (!preferences.updateRate || (preferences.updateRate <= 0.0)) {
-        return 'Update Rate must be greater than zero'
+    if (!preferences.orientationRoll) {
+        return "Roll axis is not set"
     }
 
-    if (!preferences.orientation.width) {
-        return "Width Axis is not set"
+    if (!preferences.orientationPitch) {
+        return "Pitch axis is not set"
     }
 
-    if (!preferences.orientation.length) {
-        return "Length Axis is not set"
+    if (preferences.orientationRoll === preferences.orientationPitch) {
+        return "Pitch and roll axis must not be the same value"
     }
 
-    if (preferences.orientation.width === preferences.orientation.length) {
-        return "Width and Length Axis must not be set to the same value"
+    if (!preferences.levelTolerance || (preferences.levelTolerance <= 0.0)) {
+        return 'Level tolerance must be greater than zero'
+    }
+
+    if (!preferences.accelerometerRate || (preferences.accelerometerRate <= 0.0)) {
+        return 'Accelerometer rate must be greater than zero'
+    }
+
+    if (!preferences.accelerometerSmoothing || (preferences.accelerometerSmoothing <= 0.0)) {
+        return 'Accelerometer rate must be greater than zero'
     }
 
     return null

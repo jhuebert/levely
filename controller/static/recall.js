@@ -4,13 +4,13 @@ function updateAxis(preferences, dimension, prefix, value) {
     const left = document.getElementById(prefix + 'LeftId');
     const right = document.getElementById(prefix + 'RightId');
 
-    if (Math.abs(value) < preferences.tolerance) {
+    if (Math.abs(value) < preferences.levelTolerance) {
         left.innerHTML = ''
         right.innerHTML = ''
         value = 0.0
     } else if (value < 0) {
-        left.innerHTML = '&darr;'
-        right.innerHTML = '&uarr;'
+        left.innerHTML = '&darr;' //&#9660;
+        right.innerHTML = '&uarr;' //&#9650;
     } else {
         left.innerHTML = '&uarr;'
         right.innerHTML = '&darr;'
@@ -21,13 +21,13 @@ function updateAxis(preferences, dimension, prefix, value) {
     const distanceDiv = document.getElementById(prefix + 'DistanceId')
     const length = 2 * Math.pow(dimension, 2.0);
     const distance = Math.sqrt(length - (length * Math.cos(value * Math.PI / 180.0)));
-    distanceDiv.innerHTML = `${distance.toPrecision(2)} ${preferences.dimensions.units}`
+    distanceDiv.innerHTML = `${distance.toPrecision(2)} ${preferences.dimensionUnits}`
 }
 
 function updateLevel(preferences, position, current) {
     if (document.getElementById('recallId')) {
-        updateAxis(preferences, preferences.dimensions.width, 'roll', current.roll - position.roll)
-        updateAxis(preferences, preferences.dimensions.length, 'pitch', current.pitch - position.pitch)
+        updateAxis(preferences, preferences.dimensionWidth, 'roll', current.roll - position.roll)
+        updateAxis(preferences, preferences.dimensionLength, 'pitch', current.pitch - position.pitch)
         return true
     }
     return false
@@ -117,12 +117,12 @@ function displayRecall(div, position, preferences, isLevel) {
             </div>
             <div class="row h-25 align-items-center mb-2">
                 <div class="col">
-                    ${createGauge('roll', 'Roll', 'Left', 'Right', preferences.dimensions.units)}
+                    ${createGauge('roll', 'Roll', 'Left', 'Right', preferences.dimensionUnits)}
                 </div>
             </div>
             <div class="row h-25 align-items-center mb-3">
                 <div class="col">
-                    ${createGauge('pitch', 'Pitch', 'Front', 'Rear', preferences.dimensions.units)}
+                    ${createGauge('pitch', 'Pitch', 'Front', 'Rear', preferences.dimensionUnits)}
                 </div>
             </div>
             <div class="row">
@@ -133,7 +133,8 @@ function displayRecall(div, position, preferences, isLevel) {
         </div>
     `;
 
-    const timeout = Math.max(1000.0 / preferences.updateRate, 100)
+    // Limit to a maximum of 10Hz
+    const timeout = Math.max(1000.0 / preferences.displayRate, 100)
     const timer = setInterval(() => {
         displayUpdate(timer, preferences, position)
     }, timeout)

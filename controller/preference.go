@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jhuebert/levely/repository"
 	"io/ioutil"
@@ -40,10 +41,14 @@ func readPreferences(r *http.Request) (repository.Preferences, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		return repository.Preferences{}, err
+		return repository.Preferences{}, fmt.Errorf("could not read preferences from request body: %w", err)
 	}
 
 	p := repository.Preferences{}
 	err = json.Unmarshal(body, &p)
+	if err != nil {
+		err = fmt.Errorf("could not unmarshal preferences from request body: %w", err)
+	}
+
 	return p, err
 }

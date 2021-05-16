@@ -11,19 +11,9 @@ func (c *Controller) registerDeviceRoutes(router *mux.Router) {
 }
 
 func (c *Controller) GetCurrentPosition(w http.ResponseWriter, r *http.Request) {
-	p, err := c.s.GetCurrentPosition()
-	if err != nil {
-		internalServerError(w, err)
-		return
-	}
-	sendResponse(w, p)
+	sendResponse(w, c.s.GetCurrentPosition())
 }
 
 func (c *Controller) GetUncorrected(w http.ResponseWriter, r *http.Request) {
-	p, err := c.s.GetUncorrected()
-	if err != nil {
-		internalServerError(w, err)
-		return
-	}
-	sendResponse(w, p)
+	sendResponse(w, c.s.GetUncorrected())
 }

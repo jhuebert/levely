@@ -1,40 +1,56 @@
 package service
 
 import (
+	"fmt"
 	"github.com/asdine/storm/v3"
 	"github.com/jhuebert/levely/repository"
 	"github.com/sirupsen/logrus"
 )
 
+func (s *Service) getDefaultCalibration() repository.Position {
+	return repository.Position{
+		Name:        "Calibration",
+		Calibration: true,
+		Favorite:    false,
+		Pitch:       0,
+		Roll:        0,
+	}
+}
+
 func (s *Service) GetCalibration() repository.Position {
+
 	p, err := s.r.FindCalibration()
-	if err != nil {
-		logrus.Error(err)
-		p = repository.Position{
-			Pitch:       0,
-			Roll:        0,
-			Calibration: true,
-		}
-		if err == storm.ErrNotFound {
-			err = s.r.SavePosition(&p)
-			if err != nil {
-				logrus.Error(err)
-			}
-		}
+	if err == nil {
 		return p
 	}
+
+	logrus.Errorf("calibration does not exist, using default: %v", err)
+	p = s.getDefaultCalibration()
+
+	if err == storm.ErrNotFound {
+		logrus.Debug("saving default calibration")
+		err = s.r.SavePosition(&p)
+		if err != nil {
+			logrus.Errorf("could not save default calibration: %v", err)
+		}
+	}
+
 	return p
 }
 
 func (s *Service) UpdateCalibration(updated repository.Position) (repository.Position, error) {
 
-	current := s.GetCalibration()
-	current.Calibration = true
-	current.Roll = updated.Roll
-	current.Pitch = updated.Pitch
-	current.Favorite = false
+	c := s.GetCalibration()
 
-	err := s.r.SavePosition(&current)
+	c.Roll = updated.Roll
+	c.Pitch = updated.Pitch
+	c.Calibration = true
+	c.Favorite = false
 
-	return current, err
+	err := s.r.SavePosition(&c)
+	if err != nil {
+		err = fmt.Errorf("could not save calibration: %v", err)
+	}
+
+	return c, err
 }

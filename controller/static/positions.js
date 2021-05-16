@@ -3,7 +3,7 @@ function displayHome(matches, div) {
     fetch('api/position')
         .then(res => res.json())
         .then(positions => {
-            const favorites = positions.filter((value, index, arr) => {
+            const favorites = positions.filter(value => {
                 return value.favorite;
             })
             div.innerHTML = `
@@ -33,5 +33,5 @@ function displayPositionList(matches, div) {
 }
 
 function createPositionButtons(positions) {
-    return positions.map((item, i) => `<a class="btn btn-lg btn-secondary btn-block" role="button" href="#position/${item.id}/recall">${item.name}</a>`.trim()).join('')
+    return positions.map(item => `<a class="btn btn-lg btn-secondary btn-block" role="button" href="#position/${item.id}/recall">${item.name}</a>`.trim()).join('')
 }
