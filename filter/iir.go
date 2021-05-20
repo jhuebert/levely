@@ -22,7 +22,7 @@ func NewIir() (*Iir, error) {
 		data, err = ioutil.ReadFile(path)
 	} else {
 		preset := viper.GetInt(config.AccelerometerFilterIirPreset)
-		data, err = firFiles.ReadFile(fmt.Sprintf("iir/iir%v.json", preset))
+		data, err = iirFiles.ReadFile(fmt.Sprintf("iir/iir%v.json", preset))
 	}
 
 	f := &Iir{}
