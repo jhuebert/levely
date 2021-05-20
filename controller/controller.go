@@ -23,6 +23,7 @@ func (c *Controller) RegisterRoutes(router *mux.Router) {
 	c.registerDeviceRoutes(router)
 	c.registerCalibrationRoutes(router)
 	c.registerPreferenceRoutes(router)
+	c.registerConfigRoutes(router)
 }
 
 func getPathInt(r *http.Request, name string) int {

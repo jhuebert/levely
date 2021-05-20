@@ -48,12 +48,10 @@ func (s *Service) captureData() {
 		return
 	}
 
-	lastPrefsUpdate := time.Now()
-	prefsUpdatePeriod := viper.GetDuration(config.AccelerometerPreferencesUpdatePeriod)
 	prefs := s.GetPreferences()
 
 	fast := true
-	fastPeriod := s.getDuration(prefs.AccelerometerRate)
+	fastPeriod := viper.GetDuration(config.AccelerometerUpdatePeriod)
 	slowPeriod := viper.GetDuration(config.AccelerometerUpdateSleepPeriod)
 	maxLastRequest := viper.GetDuration(config.AccelerometerUpdateSleepWait)
 	ticker := time.NewTicker(fastPeriod)
@@ -82,18 +80,15 @@ func (s *Service) captureData() {
 
 		sinceLastRequest := ts.Sub(lastRequest)
 		if fast && (sinceLastRequest > maxLastRequest) {
-			logrus.Info("decreasing update speed")
+			logrus.Info("decreasing update speed to save power")
 			ticker.Reset(slowPeriod)
 			fast = false
 		} else if !fast && (sinceLastRequest < maxLastRequest) {
-			logrus.Info("increasing update speed")
+			logrus.Info("increasing update speed due to demand")
 			ticker.Reset(fastPeriod)
 			fast = true
-		} else if fast && ts.Sub(lastPrefsUpdate) > prefsUpdatePeriod {
-			logrus.Infof("updating preferences")
+			logrus.Debug("updating preferences")
 			prefs = s.GetPreferences()
-			ticker.Reset(s.getDuration(prefs.AccelerometerRate))
-			lastPrefsUpdate = ts
 		}
 	}
 }

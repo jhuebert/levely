@@ -18,10 +18,6 @@ func (s *Service) getDefaultPreferences() repository.Preferences {
 		OrientationRoll:        repository.AxisX,
 		OrientationInvertPitch: false,
 		OrientationInvertRoll:  false,
-		LevelTolerance:         0.1,
-		DisplayRate:            8,
-		AccelerometerSmoothing: 1000,
-		AccelerometerRate:      250,
 	}
 }
 
@@ -62,10 +58,6 @@ func (s *Service) UpdatePreferences(updated repository.Preferences) (repository.
 	p.OrientationRoll = updated.OrientationRoll
 	p.OrientationInvertPitch = updated.OrientationInvertPitch
 	p.OrientationInvertRoll = updated.OrientationInvertRoll
-	p.LevelTolerance = updated.LevelTolerance
-	p.DisplayRate = updated.DisplayRate
-	p.AccelerometerSmoothing = updated.AccelerometerSmoothing
-	p.AccelerometerRate = updated.AccelerometerRate
 
 	return s.r.UpdatePreferences(p)
 }
@@ -94,18 +86,6 @@ func isValid(p repository.Preferences) error {
 
 	if p.OrientationRoll == p.OrientationPitch {
 		return errors.New("pitch and roll axis must not be the same value")
-	}
-
-	if p.LevelTolerance <= 0.0 {
-		return errors.New("level tolerance must be greater than zero")
-	}
-
-	if p.AccelerometerRate <= 0.0 {
-		return errors.New("accelerometer rate must be greater than zero")
-	}
-
-	if p.AccelerometerSmoothing <= 0.0 {
-		return errors.New("accelerometer rate must be greater than zero")
 	}
 
 	return nil

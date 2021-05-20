@@ -1,10 +1,10 @@
 
-function updateAxis(preferences, dimension, prefix, value) {
+function updateAxis(preferences, config, dimension, prefix, value) {
 
     const left = document.getElementById(prefix + 'LeftId');
     const right = document.getElementById(prefix + 'RightId');
 
-    if (Math.abs(value) < preferences.levelTolerance) {
+    if (Math.abs(value) < config.displayLevelTolerance) {
         left.innerHTML = ''
         right.innerHTML = ''
         value = 0.0
@@ -24,10 +24,10 @@ function updateAxis(preferences, dimension, prefix, value) {
     distanceDiv.innerHTML = `${distance.toPrecision(2)} ${preferences.dimensionUnits}`
 }
 
-function updateLevel(preferences, position, current) {
+function updateLevel(preferences, config, position, current) {
     if (document.getElementById('recallId')) {
-        updateAxis(preferences, preferences.dimensionWidth, 'roll', current.roll - position.roll)
-        updateAxis(preferences, preferences.dimensionLength, 'pitch', current.pitch - position.pitch)
+        updateAxis(preferences, config, preferences.dimensionWidth, 'roll', current.roll - position.roll)
+        updateAxis(preferences, config, preferences.dimensionLength, 'pitch', current.pitch - position.pitch)
         return true
     }
     return false
@@ -83,11 +83,11 @@ function createGauge(prefix, name, leftName, rightName, units) {
     `
 }
 
-function displayUpdate(timer, preferences, position) {
+function displayUpdate(timer, preferences, config, position) {
     fetch('api/corrected')
         .then(res => res.json())
         .then(current => {
-            if (!updateLevel(preferences, position, current)) {
+            if (!updateLevel(preferences, config, position, current)) {
                 clearInterval(timer)
             }
         })
@@ -95,19 +95,23 @@ function displayUpdate(timer, preferences, position) {
 }
 
 async function displayLevel(matches, div) {
-    const preferences = await getUrl('api/preference')
-    displayRecall(div, {roll: 0.0, pitch: 0.0}, preferences, true)
+    const json = await getUrls([
+        'api/preference',
+        'api/config'
+    ])
+    displayRecall(div, {roll: 0.0, pitch: 0.0}, json[0], json[1], true)
 }
 
 async function displayPositionRecall(matches, div) {
     const json = await getUrls([
         'api/position/' + matches[1],
-        'api/preference'
+        'api/preference',
+        'api/config'
     ])
-    displayRecall(div, json[0], json[1], false)
+    displayRecall(div, json[0], json[1], json[2], false)
 }
 
-function displayRecall(div, position, preferences, isLevel) {
+function displayRecall(div, position, preferences, config, isLevel) {
     div.innerHTML = `
         <div class="container h-100" id="recallId">
             <div class="row text-light mb-2">
@@ -134,8 +138,8 @@ function displayRecall(div, position, preferences, isLevel) {
     `;
 
     // Limit to a maximum of 10Hz
-    const timeout = Math.max(1000.0 / preferences.displayRate, 100)
+    const timeout = Math.max(1000.0 / config.displayUpdateRate, 100)
     const timer = setInterval(() => {
-        displayUpdate(timer, preferences, position)
+        displayUpdate(timer, preferences, config, position)
     }, timeout)
 }

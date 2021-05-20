@@ -3,20 +3,18 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/gorilla/mux"
 	"github.com/jhuebert/levely/config"
 	"github.com/jhuebert/levely/controller"
 	"github.com/jhuebert/levely/repository"
 	"github.com/jhuebert/levely/service"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
-
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func main() {
@@ -68,9 +66,9 @@ func main() {
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         viper.GetString(config.ServerAddress),
-		WriteTimeout: viper.GetDuration(config.ServerWriteTimeout) * time.Millisecond,
-		ReadTimeout:  viper.GetDuration(config.ServerReadTimeout) * time.Millisecond,
-		IdleTimeout:  viper.GetDuration(config.ServerIdleTimeout) * time.Millisecond,
+		WriteTimeout: viper.GetDuration(config.ServerWriteTimeout),
+		ReadTimeout:  viper.GetDuration(config.ServerReadTimeout),
+		IdleTimeout:  viper.GetDuration(config.ServerIdleTimeout),
 	}
 
 	// Run our server in a goroutine so that it doesn't block.
@@ -89,7 +87,7 @@ func main() {
 	<-c
 
 	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(config.ServerStopTimeout)*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(config.ServerStopTimeout))
 	defer cancel()
 
 	// Doesn't block if no connections, but will otherwise wait
@@ -130,7 +128,7 @@ func getDriver() *i2c.MPU6050Driver {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logrus.Infof("%v %v", r.RequestURI, r.Method)
+		logrus.Debugf("%v %v", r.RequestURI, r.Method)
 		next.ServeHTTP(w, r)
 	})
 }

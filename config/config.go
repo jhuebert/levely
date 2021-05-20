@@ -16,11 +16,10 @@ const (
 	DisplayLevelTolerance string = "display.level.tolerance"
 	DisplayUpdateRate     string = "display.update.rate"
 
-	AccelerometerI2CAddress              string = "accelerometer.i2c.address"
-	AccelerometerUpdateSleepWait         string = "accelerometer.update.sleep.wait"
-	AccelerometerUpdateSleepPeriod       string = "accelerometer.update.sleep.period"
-	AccelerometerPreferencesUpdatePeriod string = "accelerometer.preferences.update.period" //TODO Deprecated
-	AccelerometerUpdatePeriod            string = "accelerometer.update.period"
+	AccelerometerI2CAddress        string = "accelerometer.i2c.address"
+	AccelerometerUpdateSleepWait   string = "accelerometer.update.sleep.wait"
+	AccelerometerUpdateSleepPeriod string = "accelerometer.update.sleep.period"
+	AccelerometerUpdatePeriod      string = "accelerometer.update.period"
 
 	AccelerometerFilterSelected          string = "accelerometer.filter.selected"
 	AccelerometerFilterSmootherSmoothing string = "accelerometer.filter.smoother.smoothing"
@@ -43,10 +42,10 @@ func init() {
 	viper.SetDefault(LogLevel, "info")
 
 	viper.SetDefault(ServerAddress, ":8080")
-	viper.SetDefault(ServerReadTimeout, "5000")
-	viper.SetDefault(ServerWriteTimeout, "5000")
-	viper.SetDefault(ServerIdleTimeout, "60000")
-	viper.SetDefault(ServerStopTimeout, "15000")
+	viper.SetDefault(ServerReadTimeout, "5s")
+	viper.SetDefault(ServerWriteTimeout, "5s")
+	viper.SetDefault(ServerIdleTimeout, "60s")
+	viper.SetDefault(ServerStopTimeout, "15s")
 
 	viper.SetDefault(DeviceI2CBus, "1")
 
@@ -54,9 +53,8 @@ func init() {
 	viper.SetDefault(DisplayUpdateRate, "4")
 
 	viper.SetDefault(AccelerometerI2CAddress, "0x68")
-	viper.SetDefault(AccelerometerUpdateSleepWait, "5s") //TODO Increase to 1m?
+	viper.SetDefault(AccelerometerUpdateSleepWait, "1s")
 	viper.SetDefault(AccelerometerUpdateSleepPeriod, "500ms")
-	viper.SetDefault(AccelerometerPreferencesUpdatePeriod, "5s") //TODO Deprecated
 	viper.SetDefault(AccelerometerUpdatePeriod, "5ms")
 
 	viper.SetDefault(AccelerometerFilterSelected, "average")

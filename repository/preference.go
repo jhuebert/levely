@@ -13,10 +13,6 @@ type Preferences struct {
 	OrientationRoll        Axis    `json:"orientationRoll"`
 	OrientationInvertPitch bool    `json:"orientationInvertPitch"`
 	OrientationInvertRoll  bool    `json:"orientationInvertRoll"`
-	LevelTolerance         float64 `json:"levelTolerance"`
-	DisplayRate            float64 `json:"displayRate"`
-	AccelerometerSmoothing float64 `json:"accelerometerSmoothing"`
-	AccelerometerRate      float64 `json:"accelerometerRate"`
 }
 
 const (

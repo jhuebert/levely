@@ -56,30 +56,6 @@ async function displayPreferences(matches, div) {
               <input type="checkbox" class="custom-control-input" id="orientationInvertPitchId" ${preferences.orientationInvertPitch ? 'checked' : ''}>
               <label class="custom-control-label text-light h5" for="orientationInvertPitchId">Invert Pitch</label>
             </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Level Tolerance</label>
-                <div class="col-sm-10" id="levelToleranceId">
-                    ${createNumberInput(preferences.levelTolerance)}
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Display Rate</label>
-                <div class="col-sm-10" id="displayRateId">
-                    ${createNumberInput(preferences.displayRate)}
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Accelerometer Rate</label>
-                <div class="col-sm-10" id="accelerometerRateId">
-                    ${createNumberInput(preferences.accelerometerRate)}
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-sm-2 col-form-label col-form-label-lg text-light">Accelerometer Smoothing</label>
-                <div class="col-sm-10" id="accelerometerSmoothingId">
-                    ${createNumberInput(preferences.accelerometerSmoothing)}
-                </div>
-            </div>
             <button type="button" class="btn btn-lg btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
             <!-- TODO Add button to export the database -->
         </div>
@@ -103,11 +79,6 @@ async function savePreferences() {
 
     preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
     preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
-
-    preferences.levelTolerance = parseFloat(document.getElementById('levelToleranceId').firstElementChild.value)
-    preferences.displayRate = parseFloat(document.getElementById('displayRateId').firstElementChild.value)
-    preferences.accelerometerRate = parseFloat(document.getElementById('accelerometerRateId').firstElementChild.value)
-    preferences.accelerometerSmoothing = parseFloat(document.getElementById('accelerometerSmoothingId').firstElementChild.value)
 
     console.log(preferences)
 
@@ -146,18 +117,6 @@ function validatePreferences(preferences) {
 
     if (preferences.orientationRoll === preferences.orientationPitch) {
         return "Pitch and roll axis must not be the same value"
-    }
-
-    if (!preferences.levelTolerance || (preferences.levelTolerance <= 0.0)) {
-        return 'Level tolerance must be greater than zero'
-    }
-
-    if (!preferences.accelerometerRate || (preferences.accelerometerRate <= 0.0)) {
-        return 'Accelerometer rate must be greater than zero'
-    }
-
-    if (!preferences.accelerometerSmoothing || (preferences.accelerometerSmoothing <= 0.0)) {
-        return 'Accelerometer rate must be greater than zero'
     }
 
     return null
