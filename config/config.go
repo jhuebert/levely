@@ -41,22 +41,27 @@ const (
 func init() {
 	viper.SetDefault(LogLevel, "info")
 
+	// set web server defaults
 	viper.SetDefault(ServerAddress, ":8080")
 	viper.SetDefault(ServerReadTimeout, "5s")
 	viper.SetDefault(ServerWriteTimeout, "5s")
 	viper.SetDefault(ServerIdleTimeout, "60s")
 	viper.SetDefault(ServerStopTimeout, "15s")
 
+	// set device defaults
 	viper.SetDefault(DeviceI2CBus, "1")
 
+	// set display defaults
 	viper.SetDefault(DisplayLevelTolerance, "0.1")
 	viper.SetDefault(DisplayUpdateRate, "4")
 
+	// set accelerometer defaults
 	viper.SetDefault(AccelerometerI2CAddress, "0x68")
 	viper.SetDefault(AccelerometerUpdateSleepWait, "1s")
 	viper.SetDefault(AccelerometerUpdateSleepPeriod, "500ms")
 	viper.SetDefault(AccelerometerUpdatePeriod, "5ms")
 
+	// set accelerometer filter defaults
 	viper.SetDefault(AccelerometerFilterSelected, "average")
 	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "1000")
 	viper.SetDefault(AccelerometerFilterAverageSize, "400")
