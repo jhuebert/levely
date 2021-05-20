@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/jhuebert/levely/config"
+	"github.com/jhuebert/levely/filter"
 	"github.com/jhuebert/levely/repository"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -24,7 +25,6 @@ func (s *Service) GetCurrentPosition() repository.Position {
 func (s *Service) GetUncorrected() repository.Position {
 
 	var p repository.Position
-	var accel Acceleration
 
 	if s.d == nil {
 		logrus.Debug("returning zero data since driver is not set")
@@ -32,14 +32,92 @@ func (s *Service) GetUncorrected() repository.Position {
 	}
 
 	select {
-	case accel = <-s.c:
-		logrus.Debug("received acceleration data")
+	case p = <-s.c:
+		logrus.Debug("received position data")
 	case <-time.After(5 * time.Second):
-		logrus.Warn("timed out waiting for acceleration data")
+		logrus.Warn("timed out waiting for position data")
+	}
+
+	return p
+}
+
+func (s *Service) captureData() {
+
+	if s.d == nil {
+		logrus.Warn("returning zero data since driver is not set")
+		return
+	}
+
+	lastPrefsUpdate := time.Now()
+	prefsUpdatePeriod := viper.GetDuration(config.AccelerometerPreferencesUpdatePeriod)
+	prefs := s.GetPreferences()
+
+	fast := true
+	fastPeriod := s.getDuration(prefs.AccelerometerRate)
+	slowPeriod := viper.GetDuration(config.AccelerometerUpdateSleepPeriod)
+	maxLastRequest := viper.GetDuration(config.AccelerometerUpdateSleepWait)
+	ticker := time.NewTicker(fastPeriod)
+
+	lastRequest := time.Now()
+	rollFilter := filter.CreateFilter()
+	pitchFilter := filter.CreateFilter()
+
+	for ts := range ticker.C {
+
+		p := s.calculatePosition(prefs)
+
+		rollFilter.Add(p.Roll)
+		pitchFilter.Add(p.Pitch)
+
+		p.Roll = rollFilter.Value()
+		p.Pitch = pitchFilter.Value()
+
+		select {
+		case s.c <- p:
+			logrus.Debug("sent acceleration data")
+			lastRequest = time.Now()
+		default:
+			logrus.Debug("no consumer waiting for acceleration data")
+		}
+
+		sinceLastRequest := ts.Sub(lastRequest)
+		if fast && (sinceLastRequest > maxLastRequest) {
+			logrus.Info("decreasing update speed")
+			ticker.Reset(slowPeriod)
+			fast = false
+		} else if !fast && (sinceLastRequest < maxLastRequest) {
+			logrus.Info("increasing update speed")
+			ticker.Reset(fastPeriod)
+			fast = true
+		} else if fast && ts.Sub(lastPrefsUpdate) > prefsUpdatePeriod {
+			logrus.Infof("updating preferences")
+			prefs = s.GetPreferences()
+			ticker.Reset(s.getDuration(prefs.AccelerometerRate))
+			lastPrefsUpdate = ts
+		}
+	}
+}
+
+type acceleration struct {
+	x, y, z float64
+}
+
+func (s *Service) calculatePosition(prefs repository.Preferences) repository.Position {
+
+	var p repository.Position
+
+	err := s.d.GetData()
+	if err != nil {
+		logrus.Debug(err)
 		return p
 	}
 
-	prefs := s.GetPreferences()
+	accel := acceleration{
+		x: float64(s.d.Accelerometer.X),
+		y: float64(s.d.Accelerometer.Y),
+		z: float64(s.d.Accelerometer.Z),
+	}
+
 	switch prefs.OrientationRoll {
 	case repository.AxisX:
 		switch prefs.OrientationPitch {
@@ -83,67 +161,6 @@ func (s *Service) GetUncorrected() repository.Position {
 	return p
 }
 
-func (s *Service) captureData() {
-
-	if s.d == nil {
-		logrus.Warn("returning zero data since driver is not set")
-		return
-	}
-
-	lastPrefsUpdate := time.Now()
-	prefsUpdatePeriod := viper.GetDuration(config.AccelerometerPreferencesUpdatePeriod)
-	prefs := s.GetPreferences()
-
-	fast := true
-	fastPeriod := s.getDuration(prefs.AccelerometerRate)
-	slowPeriod := viper.GetDuration(config.AccelerometerUpdateSleepPeriod)
-	maxLastRequest := viper.GetDuration(config.AccelerometerUpdateSleepWait)
-	ticker := time.NewTicker(fastPeriod)
-
-	lastRequest := time.Now()
-	accel := Acceleration{
-		timestamp: time.Now(),
-	}
-
-	for ts := range ticker.C {
-
-		err := s.d.GetData()
-		if err != nil {
-			logrus.Debug(err)
-			continue
-		}
-
-		accel.x = updateSmooth(accel.timestamp, accel.x, ts, s.d.Accelerometer.X, prefs.AccelerometerSmoothing)
-		accel.y = updateSmooth(accel.timestamp, accel.y, ts, s.d.Accelerometer.Y, prefs.AccelerometerSmoothing)
-		accel.z = updateSmooth(accel.timestamp, accel.z, ts, s.d.Accelerometer.Z, prefs.AccelerometerSmoothing)
-		accel.timestamp = ts
-
-		select {
-		case s.c <- accel:
-			logrus.Debug("sent acceleration data")
-			lastRequest = time.Now()
-		default:
-			logrus.Debug("no consumer waiting for acceleration data")
-		}
-
-		sinceLastRequest := ts.Sub(lastRequest)
-		if fast && (sinceLastRequest > maxLastRequest) {
-			logrus.Info("decreasing update speed")
-			ticker.Reset(slowPeriod)
-			fast = false
-		} else if !fast && (sinceLastRequest < maxLastRequest) {
-			logrus.Info("increasing update speed")
-			ticker.Reset(fastPeriod)
-			fast = true
-		} else if fast && ts.Sub(lastPrefsUpdate) > prefsUpdatePeriod {
-			logrus.Infof("updating preferences")
-			prefs = s.GetPreferences()
-			ticker.Reset(s.getDuration(prefs.AccelerometerRate))
-			lastPrefsUpdate = ts
-		}
-	}
-}
-
 func (s *Service) getDuration(rate float64) time.Duration {
 	limited := math.Min(math.Max(rate, 1), 1000)
 	return time.Duration(1000/limited) * time.Millisecond
@@ -165,14 +182,4 @@ func adjustedAtan2(y, x float64) float64 {
 		r += 180
 	}
 	return r
-}
-
-func updateSmooth(previousTime time.Time, previousValue float64, currentTime time.Time, currentValue int16, smoothing float64) float64 {
-	valueDifference := float64(currentValue) - previousValue
-	ratio := float64(currentTime.Sub(previousTime).Milliseconds()) / smoothing
-	if ratio > 1 {
-		logrus.Debug("ratio is too large")
-		ratio = 1
-	}
-	return previousValue + (ratio * valueDifference)
 }
