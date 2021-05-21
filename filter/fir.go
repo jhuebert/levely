@@ -67,8 +67,13 @@ func (f *Fir) Add(value float64) {
 
 func (f *Fir) Value() float64 {
 	output := 0.0
+	sampleIndex := f.index
 	for i := 0; i < len(f.Coefficients); i++ {
-		output += f.Coefficients[i] * f.samples[i]
+		output += f.Coefficients[i] * f.samples[sampleIndex]
+		sampleIndex++
+		if sampleIndex == len(f.samples) {
+			sampleIndex = 0
+		}
 	}
 	return output
 }
