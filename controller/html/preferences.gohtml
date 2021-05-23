@@ -1,0 +1,115 @@
+<!--
+Expected:
+    Preferences
+-->
+{{- define "preferences"}}
+{{- template "header"}}
+<div class="container h-100">
+    <div class="row px-3" id="alert"></div>
+    <div class="text-light text-center h3 mb-2">Preferences</div>
+    <div class="form-group row align-items-center">
+        <label class="col-sm-2 col-form-label col-form-label-lg text-light">Width</label>
+        <div class="col-sm-10" id="dimensionWidthId">
+            <input id="dimensionWidthInputId" type="number" class="form-control" placeholder="0.0" value="{{.Preferences.DimensionWidth}}" />
+        </div>
+    </div>
+    <div class="form-group row align-items-center">
+        <label class="col-sm-2 col-form-label col-form-label-lg text-light">Length</label>
+        <div class="col-sm-10" id="dimensionLengthId">
+            <input id="dimensionLengthInputId" type="number" class="form-control" placeholder="0.0" value="{{.Preferences.DimensionLength}}" />
+        </div>
+    </div>
+    <div class="form-group row align-items-center">
+        <label class="col-sm-2 col-form-label col-form-label-lg text-light">Units</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="dimensionUnitsId" >
+                <option value="in" {{- if eq .Preferences.DimensionUnits "in"}}selected{{- end}}>Inches</option>
+                <option value="cm" {{- if eq .Preferences.DimensionUnits "cm"}}selected{{- end}}>Centimeters</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row align-items-center">
+        <label class="col-sm-2 col-form-label col-form-label-lg text-light">Roll Axis</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="orientationRollId" >
+                <option value="x" {{- if eq .Preferences.OrientationRoll "x"}}selected{{- end}}>X</option>
+                <option value="y" {{- if eq .Preferences.OrientationRoll "y"}}selected{{- end}}>Y</option>
+                <option value="z" {{- if eq .Preferences.OrientationRoll "z"}}selected{{- end}}>Z</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row align-items-center">
+        <label class="col-sm-2 col-form-label col-form-label-lg text-light">Pitch Axis</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="orientationPitchId" >
+                <option value="x" {{- if eq .Preferences.OrientationPitch "x"}}selected{{- end}}>X</option>
+                <option value="y" {{- if eq .Preferences.OrientationPitch "y"}}selected{{- end}}>Y</option>
+                <option value="z" {{- if eq .Preferences.OrientationPitch "z"}}selected{{- end}}>Z</option>
+            </select>
+        </div>
+    </div>
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="orientationInvertRollId" {{- if .Preferences.OrientationInvertRoll}}checked{{- end}}>
+        <label class="custom-control-label text-light h5" for="orientationInvertRollId">Invert Roll</label>
+    </div>
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="orientationInvertPitchId" {{- if .Preferences.OrientationInvertPitch}}checked{{- end}}>
+        <label class="custom-control-label text-light h5" for="orientationInvertPitchId">Invert Pitch</label>
+    </div>
+    <button type="button" class="btn btn-lg btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
+    <!-- TODO Add button to export the database -->
+</div>
+{{- template "jsutil"}}
+<script>
+async function savePreferences() {
+    const preferences = {}
+    preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthInputId').value)
+    preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthInputId').value)
+    preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
+    preferences.orientationRoll = document.getElementById('orientationRollId').value
+    preferences.orientationPitch = document.getElementById('orientationPitchId').value
+    preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
+    preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
+
+    const validationResult = validatePreferences(preferences)
+    if (validationResult) {
+        displayAlert('alert-danger', validationResult)
+        return
+    }
+
+    await putUrl('/api/preference', preferences)
+
+    //TODO This is always displaying even with a 404 from the previous call
+    displayAlert('alert-success', 'Update success', true)
+}
+function validatePreferences(preferences) {
+
+    if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
+        return 'Width must be greater than zero'
+    }
+
+    if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
+        return 'Length must be greater than zero'
+    }
+
+    if (!preferences.dimensionUnits) {
+        return 'Dimension unit not specified'
+    }
+
+    if (!preferences.orientationRoll) {
+        return "Roll axis is not set"
+    }
+
+    if (!preferences.orientationPitch) {
+        return "Pitch axis is not set"
+    }
+
+    if (preferences.orientationRoll === preferences.orientationPitch) {
+        return "Pitch and roll axis must not be the same value"
+    }
+
+    return null
+}
+</script>
+{{- template "footer"}}
+{{- end}}

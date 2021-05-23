@@ -3,23 +3,35 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/jhuebert/levely/repository"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/jhuebert/levely/repository"
+	"github.com/sirupsen/logrus"
 )
 
 func (c *Controller) registerPreferenceRoutes(router *mux.Router) {
-	router.HandleFunc("/api/preference", c.GetPreferences).Methods("GET")
-	router.HandleFunc("/api/preference", c.UpdatePreferences).Methods("PUT")
+	router.HandleFunc("/html/preference", c.showPreferences).Methods("GET")
+	router.HandleFunc("/api/preference", c.updatePreferences).Methods("PUT")
 }
 
-func (c *Controller) GetPreferences(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) showPreferences(w http.ResponseWriter, r *http.Request) {
+
 	p := c.s.GetPreferences()
-	sendResponse(w, p)
+
+	tData := struct {
+		Preferences repository.Preferences
+	}{
+		p,
+	}
+	err := c.t.ExecuteTemplate(w, "preferences", tData)
+	if err != nil {
+		logrus.Error(err)
+	}
 }
 
-func (c *Controller) UpdatePreferences(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) updatePreferences(w http.ResponseWriter, r *http.Request) {
 
 	p, err := readPreferences(r)
 	if err != nil {

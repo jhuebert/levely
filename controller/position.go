@@ -2,40 +2,93 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"github.com/jhuebert/levely/repository"
 	"io/ioutil"
 	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/jhuebert/levely/repository"
+	"github.com/sirupsen/logrus"
+)
+
+const (
+	editNew      string = "new"
+	editExisting string = "edit"
 )
 
 func (c *Controller) registerPositionRoutes(router *mux.Router) {
-	router.HandleFunc("/api/position", c.FindAllPositions).Methods("GET")
-	router.HandleFunc("/api/position", c.CreatePosition).Methods("POST")
-	router.HandleFunc("/api/position/{id}", c.FindPosition).Methods("GET")
-	router.HandleFunc("/api/position/{id}", c.UpdatePosition).Methods("PUT")
-	router.HandleFunc("/api/position/{id}", c.DeletePosition).Methods("DELETE")
+	router.HandleFunc("/html/position", c.showPositionList).Methods("GET")
+	router.HandleFunc("/html/position/new", c.showNewPosition).Methods("GET")
+	router.HandleFunc("/html/position/{id}", c.showExistingPosition).Methods("GET")
+	router.HandleFunc("/api/position", c.createPosition).Methods("POST")
+	router.HandleFunc("/api/position/{id}", c.updatePosition).Methods("PUT")
+	router.HandleFunc("/api/position/{id}", c.deletePosition).Methods("DELETE")
 }
 
-func (c *Controller) FindAllPositions(w http.ResponseWriter, r *http.Request) {
-	positions, err := c.s.FindAllPositions()
+func (c *Controller) showPositionList(w http.ResponseWriter, r *http.Request) {
+
+	ps, err := c.s.FindAllPositions()
 	if err != nil {
-		notFoundError(w, err)
+		internalServerError(w, err)
 		return
 	}
-	sendResponse(w, positions)
+
+	tData := struct {
+		Positions []repository.Position
+	}{
+		ps,
+	}
+	err = c.t.ExecuteTemplate(w, "positionList", tData)
+	if err != nil {
+		logrus.Error(err)
+	}
 }
 
-func (c *Controller) FindPosition(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) showNewPosition(w http.ResponseWriter, r *http.Request) {
+
+	p := c.s.GetCurrentPosition()
+	p.Name = time.Now().Format("2006-01-02 3:04:05 PM")
+
+	tData := struct {
+		Position repository.Position
+		Type     string
+		Title    string
+	}{
+		p,
+		editNew,
+		"New Position",
+	}
+	err := c.t.ExecuteTemplate(w, "positionEditor", tData)
+	if err != nil {
+		logrus.Error(err)
+	}
+}
+
+func (c *Controller) showExistingPosition(w http.ResponseWriter, r *http.Request) {
+
 	id := getPathInt(r, "id")
-	position, err := c.s.FindPosition(id)
+	p, err := c.s.FindPosition(id)
 	if err != nil {
 		notFoundError(w, err)
 		return
 	}
-	sendResponse(w, position)
+
+	tData := struct {
+		Position repository.Position
+		Type     string
+		Title    string
+	}{
+		p,
+		editExisting,
+		"Edit Position",
+	}
+	err = c.t.ExecuteTemplate(w, "positionEditor", tData)
+	if err != nil {
+		logrus.Error(err)
+	}
 }
 
-func (c *Controller) CreatePosition(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) createPosition(w http.ResponseWriter, r *http.Request) {
 
 	p, err := readPosition(r)
 	if err != nil {
@@ -52,7 +105,7 @@ func (c *Controller) CreatePosition(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, o)
 }
 
-func (c *Controller) UpdatePosition(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) updatePosition(w http.ResponseWriter, r *http.Request) {
 
 	updated, err := readPosition(r)
 	if err != nil {
@@ -71,7 +124,7 @@ func (c *Controller) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, p)
 }
 
-func (c *Controller) DeletePosition(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) deletePosition(w http.ResponseWriter, r *http.Request) {
 	id := getPathInt(r, "id")
 	err := c.s.DeletePosition(id)
 	if err != nil {

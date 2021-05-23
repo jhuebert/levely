@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"net/http"
+	"os"
+	"os/signal"
+
 	"github.com/gorilla/mux"
 	"github.com/jhuebert/levely/config"
 	"github.com/jhuebert/levely/controller"
@@ -12,9 +16,6 @@ import (
 	"github.com/spf13/viper"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
-	"net/http"
-	"os"
-	"os/signal"
 )
 
 func main() {
@@ -32,7 +33,7 @@ func main() {
 	if configPath != "" {
 		viper.SetConfigFile(configPath)
 		if err := viper.ReadInConfig(); err != nil {
-			logrus.Error(err)
+			logrus.Errorf("error reading config: %v", err)
 			flag.Usage()
 			return
 		}
@@ -51,7 +52,7 @@ func main() {
 
 	r, err := repository.New(dbPath)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("could not open database: %v", err)
 		return
 	}
 
@@ -59,7 +60,11 @@ func main() {
 
 	d := getDriver()
 	s := service.New(r, d)
-	rc := controller.New(s)
+	rc, err := controller.New(s)
+	if err != nil {
+		logrus.Errorf("error setting up controller: %v", err)
+		return
+	}
 	rc.RegisterRoutes(router)
 
 	// Define the REST server

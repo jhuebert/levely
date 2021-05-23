@@ -6,14 +6,14 @@ import (
 )
 
 func (c *Controller) registerDeviceRoutes(router *mux.Router) {
-	router.HandleFunc("/api/corrected", c.GetCurrentPosition).Methods("GET")
-	router.HandleFunc("/api/uncorrected", c.GetUncorrected).Methods("GET")
+	router.HandleFunc("/api/corrected", c.getCurrentPosition).Methods("GET")
+	router.HandleFunc("/api/uncorrected", c.getUncorrected).Methods("GET")
 }
 
-func (c *Controller) GetCurrentPosition(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) getCurrentPosition(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, c.s.GetCurrentPosition())
 }
 
-func (c *Controller) GetUncorrected(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) getUncorrected(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, c.s.GetUncorrected())
 }

@@ -1,20 +1,28 @@
 package controller
 
 import (
+	"embed"
 	"encoding/json"
+	"html/template"
+	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 	"github.com/jhuebert/levely/service"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
 )
 
 type Controller struct {
 	s *service.Service
+	t *template.Template
 }
 
-func New(s *service.Service) Controller {
-	return Controller{s}
+//go:embed html
+var templateFiles embed.FS
+
+func New(s *service.Service) (Controller, error) {
+	t, err := template.ParseFS(templateFiles, "html/*.gohtml")
+	return Controller{s, t}, err
 }
 
 func (c *Controller) RegisterRoutes(router *mux.Router) {
@@ -23,7 +31,8 @@ func (c *Controller) RegisterRoutes(router *mux.Router) {
 	c.registerDeviceRoutes(router)
 	c.registerCalibrationRoutes(router)
 	c.registerPreferenceRoutes(router)
-	c.registerConfigRoutes(router)
+	c.registerHomeRoutes(router)
+	c.registerRecallRoutes(router)
 }
 
 func getPathInt(r *http.Request, name string) int {

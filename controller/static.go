@@ -2,37 +2,33 @@ package controller
 
 import (
 	"embed"
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
+	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/jhuebert/levely/config"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 //go:embed static
 var staticFiles embed.FS
 
 func (c *Controller) registerStaticRoutes(router *mux.Router) {
-	router.HandleFunc("/", getFile).Methods("GET")
-	router.HandleFunc("/favicon.ico", getFile).Methods("GET")
-	router.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFiles)))
+	router.HandleFunc("/", redirectToHome).Methods("GET")
+	cacheTime := viper.GetDuration(config.ServerStaticCacheControlPeriod)
+	router.PathPrefix("/static/").Handler(cacheControlWrapper(cacheTime, http.FileServer(http.FS(staticFiles))))
 }
 
-func getFile(w http.ResponseWriter, r *http.Request) {
+func cacheControlWrapper(cacheTime time.Duration, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", int(cacheTime.Seconds())))
+		h.ServeHTTP(w, r)
+	})
+}
 
-	fp := r.RequestURI[1:]
-	if fp == "" {
-		fp = "static/index.html"
-	} else if fp == "favicon.ico" {
-		fp = "static/favicon.ico"
-	}
-
-	data, err := staticFiles.ReadFile(fp)
-	if err != nil {
-		notFoundError(w, err)
-	}
-
-	w.WriteHeader(200)
-	_, err = w.Write(data)
-	if err != nil {
-		logrus.Error(err)
-	}
+func redirectToHome(w http.ResponseWriter, r *http.Request) {
+	logrus.Debug("redirecting to home")
+	http.Redirect(w, r, "http://"+r.Host+"/html/home", http.StatusFound)
 }

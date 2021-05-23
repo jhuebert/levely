@@ -1,0 +1,20 @@
+<!--
+Expected:
+    Positions
+-->
+{{- define "home"}}
+{{- template "header"}}
+<div class="container h-100">
+    <a class="btn btn-lg btn-primary btn-block mb-4" role="button" href="/html/level"><div class="display-4">Level</div></a>
+    {{- if not .Positions}}
+        <div class="text-secondary text-center">You have no favorites</div>
+    {{- else }}
+        {{- range .Positions}}
+            {{- template "positionButton" .}}
+        {{- end}}
+    {{- end}}
+    <a class="btn btn-lg btn-primary btn-block mt-4" role="button" href="/html/position">View All Positions</a>
+    <a class="btn btn-lg btn-success btn-block" role="button" href="/html/position/new">Save Current Position</a>
+</div>
+{{- template "footer"}}
+{{- end}}

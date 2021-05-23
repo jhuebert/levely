@@ -30,6 +30,16 @@ func (r *Repository) FindPositions() ([]Position, error) {
 	return entities, err
 }
 
+func (r *Repository) FindFavoritePositions() ([]Position, error) {
+	var entities []Position
+	s := q.And(q.Eq("Calibration", false), q.Eq("Favorite", true))
+	err := r.db.Select(s).Find(&entities)
+	if err == storm.ErrNotFound {
+		return []Position{}, nil
+	}
+	return entities, err
+}
+
 func (r *Repository) FindPosition(id int) (Position, error) {
 	var entity Position
 	err := r.db.One("ID", id, &entity)

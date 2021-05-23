@@ -5,11 +5,12 @@ import "github.com/spf13/viper"
 const (
 	LogLevel string = "log.level"
 
-	ServerAddress      string = "server.address"
-	ServerReadTimeout  string = "server.timeout.read"
-	ServerWriteTimeout string = "server.timeout.write"
-	ServerIdleTimeout  string = "server.timeout.idle"
-	ServerStopTimeout  string = "server.timeout.stop"
+	ServerAddress                  string = "server.address"
+	ServerReadTimeout              string = "server.timeout.read"
+	ServerWriteTimeout             string = "server.timeout.write"
+	ServerIdleTimeout              string = "server.timeout.idle"
+	ServerStopTimeout              string = "server.timeout.stop"
+	ServerStaticCacheControlPeriod string = "server.static.cache.control.period"
 
 	DeviceI2CBus string = "device.i2c.bus"
 
@@ -47,6 +48,7 @@ func init() {
 	viper.SetDefault(ServerWriteTimeout, "5s")
 	viper.SetDefault(ServerIdleTimeout, "60s")
 	viper.SetDefault(ServerStopTimeout, "15s")
+	viper.SetDefault(ServerStaticCacheControlPeriod, "1h")
 
 	// set device defaults
 	viper.SetDefault(DeviceI2CBus, "1")

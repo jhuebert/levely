@@ -1,12 +1,17 @@
+<!--
+Expected:
+    N/A
+-->
+{{- define "header"}}
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-        <link rel="icon" type="image/png" href="branding.png"/>
-        <link rel="stylesheet" href="static/bootstrap.min.css">
-        <script src="static/jquery-3.5.1.slim.min.js"></script>
-        <script src="static/bootstrap.bundle.min.js"></script>
+        <link rel="icon" type="image/png" href="/static/branding.png"/>
+        <link rel="stylesheet" href="/static/bootstrap.min.css">
+        <script src="/static/jquery-3.5.1.slim.min.js"></script>
+        <script src="/static/bootstrap.bundle.min.js"></script>
         <title>Levely</title>
         <style>
             html,
@@ -23,35 +28,27 @@
             <div class="row no-gutters mb-2">
                 <div class="col">
                     <nav class="navbar navbar-expand-lg navbar-dark">
-
-                        <!-- Navbar brand -->
-                        <a class="navbar-brand" href="#home"><img src="static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
-
-                        <!-- Collapse button -->
+                        <a class="navbar-brand" href="/html/home"><img src="/static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse"
                                 data-target="#collapsibleNav"
                                 aria-controls="collapsibleNav" aria-expanded="false"
                                 aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-
-                        <!-- Collapsible content -->
                         <div class="collapse navbar-collapse" id="collapsibleNav">
-
-                            <!-- Links -->
                             <ul class="navbar-nav mr-auto">
                                 <li class="nav-item active">
-                                    <a class="nav-link" href="#home">Home
+                                    <a class="nav-link" href="/html/home">Home
                                         <span class="sr-only">(current)</span>
                                     </a>
                                 </li>
                                 <li class="nav-item active">
-                                    <a class="nav-link" href="#setting/calibration">Calibration
+                                    <a class="nav-link" href="/html/calibration">Calibration
                                         <span class="sr-only">(current)</span>
                                     </a>
                                 </li>
                                 <li class="nav-item active">
-                                    <a class="nav-link" href="#setting/preference">Preferences
+                                    <a class="nav-link" href="/html/preference">Preferences
                                         <span class="sr-only">(current)</span>
                                     </a>
                                 </li>
@@ -62,15 +59,12 @@
             </div>
             <div class="row h-100 no-gutters">
                 <div class="col h-100">
-                    <div class="h-100" id="app"></div>
+{{- end}}
+
+{{- define "footer"}}
                 </div>
             </div>
         </div>
     </body>
-    <script src="static/calibration.js"></script>
-    <script src="static/editor.js"></script>
-    <script src="static/positions.js"></script>
-    <script src="static/preferences.js"></script>
-    <script src="static/recall.js"></script>
-    <script src="static/app.js"></script>
 </html>
+{{- end}}

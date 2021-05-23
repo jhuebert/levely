@@ -1,21 +1,34 @@
 package controller
 
 import (
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/jhuebert/levely/repository"
+	"github.com/sirupsen/logrus"
 )
 
 func (c *Controller) registerCalibrationRoutes(router *mux.Router) {
-	router.HandleFunc("/api/calibration", c.GetCalibration).Methods("GET")
-	router.HandleFunc("/api/calibration", c.UpdateCalibration).Methods("PUT")
+	router.HandleFunc("/html/calibration", c.showCalibration).Methods("GET")
+	router.HandleFunc("/api/calibration", c.updateCalibration).Methods("PUT")
 }
 
-func (c *Controller) GetCalibration(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) showCalibration(w http.ResponseWriter, r *http.Request) {
+
 	p := c.s.GetCalibration()
-	sendResponse(w, p)
+
+	tData := struct {
+		Position repository.Position
+	}{
+		p,
+	}
+	err := c.t.ExecuteTemplate(w, "calibration", tData)
+	if err != nil {
+		logrus.Error(err)
+	}
 }
 
-func (c *Controller) UpdateCalibration(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) updateCalibration(w http.ResponseWriter, r *http.Request) {
 
 	p, err := readPosition(r)
 	if err != nil {

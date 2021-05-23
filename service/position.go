@@ -10,6 +10,10 @@ func (s *Service) FindAllPositions() ([]repository.Position, error) {
 	return s.r.FindPositions()
 }
 
+func (s *Service) FindFavoritePositions() ([]repository.Position, error) {
+	return s.r.FindFavoritePositions()
+}
+
 func (s *Service) FindPosition(id int) (repository.Position, error) {
 	return s.r.FindPosition(id)
 }
