@@ -19,22 +19,6 @@ func CreateFilter() Filter {
 		return NewSmoother()
 	case config.FilterAverage:
 		return NewMovingAverage()
-	case config.FilterMedian:
-		return NewMovingMedian()
-	case config.FilterIir:
-		f, err := NewIir()
-		if err != nil {
-			logrus.Errorf("error encountered creating IIR filter: %v", err)
-			return NewMovingAverage()
-		}
-		return f
-	case config.FilterFir:
-		f, err := NewFir()
-		if err != nil {
-			logrus.Errorf("error encountered creating FIR filter: %v", err)
-			return NewMovingAverage()
-		}
-		return f
 	case config.FilterPassthrough:
 		return NewPassthrough()
 	default:

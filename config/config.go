@@ -5,12 +5,12 @@ import "github.com/spf13/viper"
 const (
 	LogLevel string = "log.level"
 
-	ServerAddress                  string = "server.address"
-	ServerReadTimeout              string = "server.timeout.read"
-	ServerWriteTimeout             string = "server.timeout.write"
-	ServerIdleTimeout              string = "server.timeout.idle"
-	ServerStopTimeout              string = "server.timeout.stop"
-	ServerStaticCacheControlPeriod string = "server.static.cache.control.period"
+	ServerAddress      string = "server.address"
+	ServerReadTimeout  string = "server.timeout.read"
+	ServerWriteTimeout string = "server.timeout.write"
+	ServerIdleTimeout  string = "server.timeout.idle"
+	ServerStopTimeout  string = "server.timeout.stop"
+	ServerCachePeriod  string = "server.cache.period"
 
 	DeviceI2CBus string = "device.i2c.bus"
 
@@ -25,17 +25,9 @@ const (
 	AccelerometerFilterSelected          string = "accelerometer.filter.selected"
 	AccelerometerFilterSmootherSmoothing string = "accelerometer.filter.smoother.smoothing"
 	AccelerometerFilterAverageSize       string = "accelerometer.filter.average.size"
-	AccelerometerFilterMedianSize        string = "accelerometer.filter.median.size"
-	AccelerometerFilterIirPath           string = "accelerometer.filter.iir.path"
-	AccelerometerFilterIirPreset         string = "accelerometer.filter.iir.preset"
-	AccelerometerFilterFirPath           string = "accelerometer.filter.fir.path"
-	AccelerometerFilterFirPreset         string = "accelerometer.filter.fir.preset"
 
 	FilterSmoother    string = "smoother"
 	FilterAverage     string = "average"
-	FilterMedian      string = "median"
-	FilterIir         string = "iir"
-	FilterFir         string = "fir"
 	FilterPassthrough string = "passthrough"
 )
 
@@ -48,7 +40,7 @@ func init() {
 	viper.SetDefault(ServerWriteTimeout, "5s")
 	viper.SetDefault(ServerIdleTimeout, "60s")
 	viper.SetDefault(ServerStopTimeout, "15s")
-	viper.SetDefault(ServerStaticCacheControlPeriod, "1h")
+	viper.SetDefault(ServerCachePeriod, "1h")
 
 	// set device defaults
 	viper.SetDefault(DeviceI2CBus, "1")
@@ -67,10 +59,4 @@ func init() {
 	viper.SetDefault(AccelerometerFilterSelected, "average")
 	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "1000")
 	viper.SetDefault(AccelerometerFilterAverageSize, "400")
-	viper.SetDefault(AccelerometerFilterMedianSize, "200")
-	viper.SetDefault(AccelerometerFilterMedianSize, "200")
-	viper.SetDefault(AccelerometerFilterIirPath, "")
-	viper.SetDefault(AccelerometerFilterIirPreset, "1")
-	viper.SetDefault(AccelerometerFilterFirPath, "")
-	viper.SetDefault(AccelerometerFilterFirPreset, "1")
 }

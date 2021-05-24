@@ -17,7 +17,7 @@ var staticFiles embed.FS
 
 func (c *Controller) registerStaticRoutes(router *mux.Router) {
 	router.HandleFunc("/", redirectToHome).Methods("GET")
-	cacheTime := viper.GetDuration(config.ServerStaticCacheControlPeriod)
+	cacheTime := viper.GetDuration(config.ServerCachePeriod)
 	router.PathPrefix("/static/").Handler(cacheControlWrapper(cacheTime, http.FileServer(http.FS(staticFiles))))
 }
 
