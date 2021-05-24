@@ -56,10 +56,17 @@ Expected:
             </div>
             </div>
         </div>
+    {{- else}}
+        <button type="button" class="btn btn-secondary btn-block" onclick="refreshPosition()">Refresh</button>
     {{- end}}
 </div>
 {{- template "jsutil"}}
 <script>
+async function refreshPosition() {
+    const corrected = await getUrl('/api/corrected')
+    document.getElementById('rollId').value = corrected.roll
+    document.getElementById('pitchId').value = corrected.pitch
+}
 async function saveNewPosition() {
     const position = getPositionFromEditor()
     if (validatePosition(position)) {
