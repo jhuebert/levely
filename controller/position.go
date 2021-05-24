@@ -11,11 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	editNew      string = "new"
-	editExisting string = "edit"
-)
-
 func (c *Controller) registerPositionRoutes(router *mux.Router) {
 	router.HandleFunc("/html/position", c.showPositionList).Methods("GET")
 	router.HandleFunc("/html/position/new", c.showNewPosition).Methods("GET")
@@ -51,12 +46,8 @@ func (c *Controller) showNewPosition(w http.ResponseWriter, r *http.Request) {
 
 	tData := struct {
 		Position repository.Position
-		Type     string
-		Title    string
 	}{
 		p,
-		editNew,
-		"New Position",
 	}
 	err := c.t.ExecuteTemplate(w, "positionEditor", tData)
 	if err != nil {
@@ -75,12 +66,8 @@ func (c *Controller) showExistingPosition(w http.ResponseWriter, r *http.Request
 
 	tData := struct {
 		Position repository.Position
-		Type     string
-		Title    string
 	}{
 		p,
-		editExisting,
-		"Edit Position",
 	}
 	err = c.t.ExecuteTemplate(w, "positionEditor", tData)
 	if err != nil {

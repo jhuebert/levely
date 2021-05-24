@@ -1,18 +1,16 @@
 <!--
 Expected:
-    Positions
+  Positions
 -->
 {{- define "positionList"}}
 {{- template "header"}}
-<div class="container h-100">
-    <div class="text-light text-center h3">Positions</div>
-    {{- if not .Positions}}
-        <div class="text-secondary text-center">You have no saved positions</div>
-    {{- else}}
-        {{- range .Positions}}
-            {{- template "positionButton" .}}
-        {{- end}}
-    {{- end}}
-</div>
+{{- template "pageTitle" "Positions"}}
+{{- if not .Positions}}
+  <div class="text-secondary text-center">You have no saved positions</div>
+{{- else}}
+  {{- range .Positions}}
+    {{- template "positionButton" .}}
+  {{- end}}
+{{- end}}
 {{- template "footer"}}
 {{- end}}

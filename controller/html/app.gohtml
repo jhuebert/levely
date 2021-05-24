@@ -1,70 +1,172 @@
 <!--
 Expected:
-    N/A
+  N/A
 -->
 {{- define "header"}}
 <!DOCTYPE HTML>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-        <link rel="icon" type="image/png" href="/static/branding.png"/>
-        <link rel="stylesheet" href="/static/bootstrap.min.css">
-        <script src="/static/jquery-3.5.1.slim.min.js"></script>
-        <script src="/static/bootstrap.bundle.min.js"></script>
-        <title>Levely</title>
-        <style>
-            html,
-            body {
-                height: 100%;
-                margin: 0;
-                min-width: 260px;
-                min-height: 480px;
-            }
-        </style>
-    </head>
-    <body class="bg-dark">
-        <div class="container h-100 p-0">
-            <div class="row no-gutters mb-2">
-                <div class="col">
-                    <nav class="navbar navbar-expand-lg navbar-dark">
-                        <a class="navbar-brand" href="/html/home"><img src="/static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                data-target="#collapsibleNav"
-                                aria-controls="collapsibleNav" aria-expanded="false"
-                                aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="collapsibleNav">
-                            <ul class="navbar-nav mr-auto">
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="/html/home">Home
-                                        <span class="sr-only">(current)</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="/html/calibration">Calibration
-                                        <span class="sr-only">(current)</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="/html/preference">Preferences
-                                        <span class="sr-only">(current)</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <link rel="icon" type="image/png" href="/static/branding.png"/>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <script src="/static/jquery-3.5.1.slim.min.js"></script>
+    <script src="/static/bootstrap.bundle.min.js"></script>
+    <script>
+      async function getUrls(urls) {
+        return await Promise.all(urls.map(url => fetch(url).then(r => r.json()).catch(err => console.error(err))))
+      }
+      async function getUrl(url) {
+        const results = await getUrls([url])
+        return results[0]
+      }
+      function putUrl(url, body) {
+        console.log(`Updating ${url} with ${JSON.stringify(body)}`)
+        return fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(body),
+        })
+        .then(r => r.json())
+        .then(r => {
+          displayAlert('alert-success', 'Update success', true)
+          return r
+        })
+        .catch(err => {
+          console.error(err)
+          displayAlert('alert-danger', 'Update failed', false)
+        });
+      }
+      function postUrl(url, body) {
+        console.log(`Creating ${url} with ${JSON.stringify(body)}`)
+        return fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(body),
+        })
+        .then(r => r.json())
+        .then(r => {
+          displayAlert('alert-success', 'Create success', true)
+          return r
+        })
+        .catch(err => {
+          console.error(err)
+          displayAlert('alert-danger', 'Create failed', false)
+        });
+      }
+      function deleteUrl(url) {
+        console.log(`Deleting ${url}`)
+        return fetch(url, {
+          method: 'DELETE'
+        })
+        .then(r => {
+          displayAlert('alert-success', 'Delete success', true)
+          return r
+        })
+        .catch(err => {
+          console.error(err)
+          displayAlert('alert-danger', 'Delete failed', false)
+        });
+      }
+      function displayAlert(type, text, autoDismiss) {
+        let alertDiv = document.getElementById('alert');
+        alertDiv.innerHTML = `
+          <div class="alert ${type} alert-dismissible fade show w-100" role="alert">
+          ${text}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+        `;
+        if (autoDismiss) {
+          setTimeout(function () {
+            alertDiv.innerHTML = '';
+          }, 2000);
+        }
+      }
+    </script>
+    <title>Levely</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        min-width: 260px;
+        min-height: 480px;
+      }
+    </style>
+  </head>
+  <body class="bg-dark">
+    <div class="container h-100 p-0">
+      <div class="row no-gutters mb-2">
+        <div class="col">
+          <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="/html/home"><img src="/static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#collapsibleNav"
+                aria-controls="collapsibleNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNav">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="/html/home">Home
+                    <span class="sr-only">(current)</span>
+                  </a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="/html/calibration">Calibration
+                    <span class="sr-only">(current)</span>
+                  </a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="/html/preference">Preferences
+                    <span class="sr-only">(current)</span>
+                  </a>
+                </li>
+              </ul>
             </div>
-            <div class="row h-100 no-gutters">
-                <div class="col h-100">
+          </nav>
+        </div>
+      </div>
+      <div class="row h-100 no-gutters">
+        <div class="container h-100">
 {{- end}}
 
+<!--
+Expected:
+  N/A
+-->
 {{- define "footer"}}
-                </div>
-            </div>
         </div>
-    </body>
+      </div>
+    </div>
+  </body>
 </html>
+{{- end}}
+
+<!--
+Expected:
+    ID
+    Name
+-->
+{{- define "positionButton"}}
+<a class="btn btn-lg btn-secondary btn-block" role="button" href="/html/position/{{.ID}}/recall">{{.Name}}</a>
+{{- end}}
+
+<!--
+Expected:
+    .
+-->
+{{- define "pageTitle"}}
+<div class="text-light text-center h3 mb-3">{{.}}</div>
+<div class="row px-3" id="alert"></div>
+{{- end}}
+
+
+<!--
+Expected:
+    .
+-->
+{{- define "formLabel"}}
+<label class="col-sm-2 col-form-label col-form-label-lg text-light">{{.}}</label>
 {{- end}}
