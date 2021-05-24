@@ -80,11 +80,11 @@ func (s *Service) captureData() {
 
 		sinceLastRequest := ts.Sub(lastRequest)
 		if fast && (sinceLastRequest > maxLastRequest) {
-			logrus.Info("decreasing update speed to save power")
+			logrus.Debug("decreasing update speed to save power")
 			ticker.Reset(slowPeriod)
 			fast = false
 		} else if !fast && (sinceLastRequest < maxLastRequest) {
-			logrus.Info("increasing update speed due to demand")
+			logrus.Debug("increasing update speed due to demand")
 			ticker.Reset(fastPeriod)
 			fast = true
 			logrus.Debug("updating preferences")
