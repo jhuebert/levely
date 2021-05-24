@@ -10,8 +10,8 @@ import (
 )
 
 func (c *Controller) registerRecallRoutes(router *mux.Router) {
-	router.HandleFunc("/html/level", c.showLevelRecall).Methods("GET")
-	router.HandleFunc("/html/position/{id}/recall", c.showPositionRecall).Methods("GET")
+	router.HandleFunc("/level", c.showLevelRecall).Methods("GET")
+	router.HandleFunc("/position/{id}/recall", c.showPositionRecall).Methods("GET")
 }
 
 func (c *Controller) showPositionRecall(w http.ResponseWriter, r *http.Request) {

@@ -65,7 +65,7 @@ async function saveNewPosition() {
   const position = getPositionFromEditor()
   if (validatePosition(position)) {
     const saved = await postUrl('/api/position', position)
-    window.location = '/html/position/' + saved.id
+    window.location = '/position/' + saved.id
   }
 }
 async function saveExistingPosition(id) {
@@ -77,7 +77,7 @@ async function saveExistingPosition(id) {
 }
 async function deletePosition(id) {
   await deleteUrl('/api/position/' + id)
-  window.location = '/html/home'
+  window.location = '/home'
 }
 function getPositionFromEditor() {
   const name = document.getElementById('nameId').value;

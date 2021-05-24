@@ -30,5 +30,5 @@ func cacheControlWrapper(cacheTime time.Duration, h http.Handler) http.Handler {
 
 func redirectToHome(w http.ResponseWriter, r *http.Request) {
 	logrus.Debug("redirecting to home")
-	http.Redirect(w, r, "http://"+r.Host+"/html/home", http.StatusFound)
+	http.Redirect(w, r, "http://"+r.Host+"/home", http.StatusFound)
 }

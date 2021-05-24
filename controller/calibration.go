@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Controller) registerCalibrationRoutes(router *mux.Router) {
-	router.HandleFunc("/html/calibration", c.showCalibration).Methods("GET")
+	router.HandleFunc("/calibration", c.showCalibration).Methods("GET")
 	router.HandleFunc("/api/calibration", c.updateCalibration).Methods("PUT")
 }
 

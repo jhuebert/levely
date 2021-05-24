@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Controller) registerHomeRoutes(router *mux.Router) {
-	router.HandleFunc("/html/home", c.showHome).Methods("GET")
+	router.HandleFunc("/home", c.showHome).Methods("GET")
 }
 
 func (c *Controller) showHome(w http.ResponseWriter, r *http.Request) {

@@ -99,7 +99,7 @@ Expected:
       <div class="row no-gutters mb-2">
         <div class="col">
           <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="/html/home"><img src="/static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
+            <a class="navbar-brand" href="/home"><img src="/static/branding.png" width="48" height="48" class="d-inline-block" alt="">&nbsp;&nbsp;Levely</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#collapsibleNav"
                 aria-controls="collapsibleNav" aria-expanded="false"
@@ -109,17 +109,17 @@ Expected:
             <div class="collapse navbar-collapse" id="collapsibleNav">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="/html/home">Home
+                  <a class="nav-link" href="/home">Home
                     <span class="sr-only">(current)</span>
                   </a>
                 </li>
                 <li class="nav-item active">
-                  <a class="nav-link" href="/html/calibration">Calibration
+                  <a class="nav-link" href="/calibration">Calibration
                     <span class="sr-only">(current)</span>
                   </a>
                 </li>
                 <li class="nav-item active">
-                  <a class="nav-link" href="/html/preference">Preferences
+                  <a class="nav-link" href="/preference">Preferences
                     <span class="sr-only">(current)</span>
                   </a>
                 </li>
@@ -150,7 +150,7 @@ Expected:
     Name
 -->
 {{- define "positionButton"}}
-<a class="btn btn-lg btn-secondary btn-block" role="button" href="/html/position/{{.ID}}/recall">{{.Name}}</a>
+<a class="btn btn-lg btn-secondary btn-block" role="button" href="/position/{{.ID}}/recall">{{.Name}}</a>
 {{- end}}
 
 <!--

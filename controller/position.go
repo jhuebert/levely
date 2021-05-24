@@ -12,9 +12,9 @@ import (
 )
 
 func (c *Controller) registerPositionRoutes(router *mux.Router) {
-	router.HandleFunc("/html/position", c.showPositionList).Methods("GET")
-	router.HandleFunc("/html/position/new", c.showNewPosition).Methods("GET")
-	router.HandleFunc("/html/position/{id}", c.showExistingPosition).Methods("GET")
+	router.HandleFunc("/position", c.showPositionList).Methods("GET")
+	router.HandleFunc("/position/new", c.showNewPosition).Methods("GET")
+	router.HandleFunc("/position/{id}", c.showExistingPosition).Methods("GET")
 	router.HandleFunc("/api/position", c.createPosition).Methods("POST")
 	router.HandleFunc("/api/position/{id}", c.updatePosition).Methods("PUT")
 	router.HandleFunc("/api/position/{id}", c.deletePosition).Methods("DELETE")

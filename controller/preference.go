@@ -12,7 +12,7 @@ import (
 )
 
 func (c *Controller) registerPreferenceRoutes(router *mux.Router) {
-	router.HandleFunc("/html/preference", c.showPreferences).Methods("GET")
+	router.HandleFunc("/preference", c.showPreferences).Methods("GET")
 	router.HandleFunc("/api/preference", c.updatePreferences).Methods("PUT")
 	router.HandleFunc("/api/preference/export", c.exportPreferences).Methods("GET")
 }
