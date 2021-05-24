@@ -1,5 +1,12 @@
 package repository
 
+import (
+	"net/http"
+	"strconv"
+
+	"go.etcd.io/bbolt"
+)
+
 type Unit string
 type Axis string
 
@@ -31,6 +38,16 @@ func (r *Repository) GetPreferences() (Preferences, error) {
 		return Preferences{}, err
 	}
 	return entity, nil
+}
+
+func (r *Repository) ExportPreferences(w http.ResponseWriter) error {
+	return r.db.Bolt.View(func(tx *bbolt.Tx) error {
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Disposition", `attachment; filename="levely.db"`)
+		w.Header().Set("Content-Length", strconv.Itoa(int(tx.Size())))
+		_, err := tx.WriteTo(w)
+		return err
+	})
 }
 
 func (r *Repository) UpdatePreferences(updated Preferences) (Preferences, error) {

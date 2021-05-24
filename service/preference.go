@@ -2,6 +2,8 @@ package service
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/asdine/storm/v3"
 	"github.com/jhuebert/levely/repository"
 	"github.com/sirupsen/logrus"
@@ -40,6 +42,10 @@ func (s *Service) GetPreferences() repository.Preferences {
 	}
 
 	return p
+}
+
+func (s *Service) ExportPreferences(w http.ResponseWriter) error {
+	return s.r.ExportPreferences(w)
 }
 
 func (s *Service) UpdatePreferences(updated repository.Preferences) (repository.Preferences, error) {

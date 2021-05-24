@@ -57,7 +57,7 @@ Expected:
         <label class="custom-control-label text-light h5" for="orientationInvertPitchId">Invert Pitch</label>
     </div>
     <button type="button" class="btn btn-lg btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
-    <!-- TODO Add button to export the database -->
+    <a class="btn btn-lg btn-secondary btn-block" role="button" href="/api/preference/export" download>Export</a>
 </div>
 {{- template "jsutil"}}
 <script>
