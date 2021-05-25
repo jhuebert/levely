@@ -51,12 +51,12 @@ func init() {
 
 	// set accelerometer defaults
 	viper.SetDefault(AccelerometerI2CAddress, "0x68")
-	viper.SetDefault(AccelerometerUpdateSleepWait, "1s")
+	viper.SetDefault(AccelerometerUpdateSleepWait, "2s")
 	viper.SetDefault(AccelerometerUpdateSleepPeriod, "500ms")
-	viper.SetDefault(AccelerometerUpdatePeriod, "5ms")
+	viper.SetDefault(AccelerometerUpdatePeriod, "1ms")
 
 	// set accelerometer filter defaults
 	viper.SetDefault(AccelerometerFilterSelected, "average")
-	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "1000")
-	viper.SetDefault(AccelerometerFilterAverageSize, "400")
+	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "500")
+	viper.SetDefault(AccelerometerFilterAverageSize, "2000")
 }
