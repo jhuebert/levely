@@ -31,6 +31,7 @@ func main() {
 	logrus.SetFormatter(logFormatter)
 
 	if configPath != "" {
+		logrus.Infof("reading config file: %v", configPath)
 		viper.SetConfigFile(configPath)
 		if err := viper.ReadInConfig(); err != nil {
 			logrus.Errorf("error reading config: %v", err)
@@ -78,14 +79,15 @@ func main() {
 
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
+		logrus.Info("starting server")
 		if err := srv.ListenAndServe(); err != nil {
-			logrus.Println(err)
+			logrus.Info(err)
 		}
 	}()
 
-	c := make(chan os.Signal, 1)
 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
 	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
+	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
 	// Block until we receive our signal.
@@ -95,8 +97,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(config.ServerStopTimeout))
 	defer cancel()
 
-	// Doesn't block if no connections, but will otherwise wait
-	// until the timeout deadline.
+	// Doesn't block if no connections, but will otherwise wait until the timeout deadline.
 	err = srv.Shutdown(ctx)
 	if err != nil {
 		logrus.Error(err)
@@ -113,6 +114,7 @@ func main() {
 }
 
 func getDriver() *i2c.MPU6050Driver {
+	logrus.Info("setting up accelerometer driver")
 
 	adaptor := raspi.NewAdaptor()
 	err := adaptor.Connect()

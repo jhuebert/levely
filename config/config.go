@@ -51,7 +51,7 @@ func init() {
 
 	// set accelerometer defaults
 	viper.SetDefault(AccelerometerI2CAddress, "0x68")
-	viper.SetDefault(AccelerometerUpdateSleepWait, "15s")
+	viper.SetDefault(AccelerometerUpdateSleepWait, "1s")
 	viper.SetDefault(AccelerometerUpdateSleepPeriod, "500ms")
 	viper.SetDefault(AccelerometerUpdatePeriod, "5ms")
 

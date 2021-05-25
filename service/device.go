@@ -117,27 +117,27 @@ func (s *Service) calculatePosition(prefs repository.Preferences) repository.Pos
 	case repository.AxisX:
 		switch prefs.OrientationPitch {
 		case repository.AxisY:
-			p = calculatePosition(accel.x, accel.y, accel.z)
+			p = calculatePosition(accel.y, accel.x, accel.z)
 		case repository.AxisZ:
-			p = calculatePosition(accel.x, accel.z, accel.y)
+			p = calculatePosition(accel.z, accel.x, accel.y)
 		default:
 			logrus.Errorf("invalid orientation %v-%v", prefs.OrientationRoll, prefs.OrientationPitch)
 		}
 	case repository.AxisY:
 		switch prefs.OrientationPitch {
 		case repository.AxisX:
-			p = calculatePosition(accel.y, accel.x, accel.z)
+			p = calculatePosition(accel.x, accel.y, accel.z)
 		case repository.AxisZ:
-			p = calculatePosition(accel.y, accel.z, accel.x)
+			p = calculatePosition(accel.z, accel.y, accel.x)
 		default:
 			logrus.Errorf("invalid orientation %v-%v", prefs.OrientationRoll, prefs.OrientationPitch)
 		}
 	case repository.AxisZ:
 		switch prefs.OrientationPitch {
 		case repository.AxisX:
-			p = calculatePosition(accel.z, accel.x, accel.y)
+			p = calculatePosition(accel.x, accel.z, accel.y)
 		case repository.AxisY:
-			p = calculatePosition(accel.z, accel.y, accel.x)
+			p = calculatePosition(accel.y, accel.z, accel.x)
 		default:
 			logrus.Errorf("invalid orientation %v-%v", prefs.OrientationRoll, prefs.OrientationPitch)
 		}
@@ -161,10 +161,10 @@ func (s *Service) getDuration(rate float64) time.Duration {
 	return time.Duration(1000/limited) * time.Millisecond
 }
 
-func calculatePosition(x, y, z float64) repository.Position {
+func calculatePosition(pitchAxis, rollAxis, otherAxis float64) repository.Position {
 	return repository.Position{
-		Roll:  adjustedAtan2(-x, math.Sqrt(y*y+z*z)),
-		Pitch: adjustedAtan2(y, z),
+		Roll:  adjustedAtan2(-pitchAxis, math.Sqrt(rollAxis*rollAxis+otherAxis*otherAxis)),
+		Pitch: adjustedAtan2(rollAxis, otherAxis),
 	}
 }
 

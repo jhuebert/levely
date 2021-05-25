@@ -10,6 +10,7 @@ type Repository struct {
 }
 
 func New(path string) (*Repository, error) {
+	logrus.Infof("opening databse: %v", path)
 	db, err := storm.Open(path)
 	return &Repository{db}, err
 }

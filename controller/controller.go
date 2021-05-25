@@ -21,11 +21,13 @@ type Controller struct {
 var templateFiles embed.FS
 
 func New(s *service.Service) (Controller, error) {
+	logrus.Info("parsing templates")
 	t, err := template.ParseFS(templateFiles, "html/*.gohtml")
 	return Controller{s, t}, err
 }
 
 func (c *Controller) RegisterRoutes(router *mux.Router) {
+	logrus.Info("registering routes")
 	c.registerStaticRoutes(router)
 	c.registerPositionRoutes(router)
 	c.registerDeviceRoutes(router)
