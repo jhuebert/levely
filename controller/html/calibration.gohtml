@@ -38,10 +38,16 @@ Expected:
   </div>
 </div>
 <script>
+samples = {
+  "roll": [],
+  "pitch": []
+}
 async function refreshCalibration() {
   const uncorrected = await getUrl('/api/uncorrected')
-  document.getElementById('rollId').value = uncorrected.roll
-  document.getElementById('pitchId').value = uncorrected.pitch
+  samples.roll.push(uncorrected.roll)
+  samples.pitch.push(uncorrected.pitch)
+  document.getElementById('rollId').value = median(samples.roll)
+  document.getElementById('pitchId').value = median(samples.pitch)
 }
 async function saveCalibration() {
   const roll = parseFloat(document.getElementById('rollId').value)
