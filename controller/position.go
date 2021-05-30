@@ -104,7 +104,7 @@ func (c *Controller) updatePosition(w http.ResponseWriter, r *http.Request) {
 
 	p, err := c.s.UpdatePosition(id, updated)
 	if err != nil {
-		notFoundError(w, err) //TODO better status
+		notFoundError(w, err)
 		return
 	}
 
@@ -115,7 +115,7 @@ func (c *Controller) deletePosition(w http.ResponseWriter, r *http.Request) {
 	id := getPathInt(r, "id")
 	err := c.s.DeletePosition(id)
 	if err != nil {
-		notFoundError(w, err) //TODO better status
+		notFoundError(w, err)
 	}
 	return
 }

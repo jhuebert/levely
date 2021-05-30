@@ -57,43 +57,46 @@ Expected:
 <button type="button" class="btn btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
 <a class="btn btn-secondary btn-block" role="button" href="/api/preference/export" download>Export</a>
 <script>
-async function savePreferences() {
-  const preferences = {}
-  preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthId').value)
-  preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthId').value)
-  preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
-  preferences.orientationRoll = document.getElementById('orientationRollId').value
-  preferences.orientationPitch = document.getElementById('orientationPitchId').value
-  preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
-  preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
-  const validationResult = validatePreferences(preferences)
-  if (validationResult) {
-    displayAlert('alert-danger', validationResult)
-    return
+
+  async function savePreferences() {
+    const preferences = {}
+    preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthId').value)
+    preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthId').value)
+    preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
+    preferences.orientationRoll = document.getElementById('orientationRollId').value
+    preferences.orientationPitch = document.getElementById('orientationPitchId').value
+    preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
+    preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
+    const validationResult = validatePreferences(preferences)
+    if (validationResult) {
+      displayAlert('alert-danger', validationResult)
+      return
+    }
+    await putUrl('/api/preference', preferences)
   }
-  await putUrl('/api/preference', preferences)
-}
-function validatePreferences(preferences) {
-  if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
-    return 'Width must be greater than zero'
+
+  function validatePreferences(preferences) {
+    if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
+      return 'Width must be greater than zero'
+    }
+    if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
+      return 'Length must be greater than zero'
+    }
+    if (!preferences.dimensionUnits) {
+      return 'Dimension unit not specified'
+    }
+    if (!preferences.orientationRoll) {
+      return "Roll axis is not set"
+    }
+    if (!preferences.orientationPitch) {
+      return "Pitch axis is not set"
+    }
+    if (preferences.orientationRoll === preferences.orientationPitch) {
+      return "Pitch and roll axis must not be the same value"
+    }
+    return null
   }
-  if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
-    return 'Length must be greater than zero'
-  }
-  if (!preferences.dimensionUnits) {
-    return 'Dimension unit not specified'
-  }
-  if (!preferences.orientationRoll) {
-    return "Roll axis is not set"
-  }
-  if (!preferences.orientationPitch) {
-    return "Pitch axis is not set"
-  }
-  if (preferences.orientationRoll === preferences.orientationPitch) {
-    return "Pitch and roll axis must not be the same value"
-  }
-  return null
-}
+  
 </script>
 {{- template "footer"}}
 {{- end}}
