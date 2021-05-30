@@ -9,95 +9,59 @@ Expected:
 {{- else}}
   {{- template "pageTitle" "New Position"}}
 {{- end}}
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Name"}}
-  <div class="col-sm-10">
-    <input type="text" class="form-control" id="nameId" placeholder="Enter position name" value="{{.Position.Name}}">
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Roll"}}
-  <div class="col-sm-10">
-    <input type="number" class="form-control" id="rollId" placeholder="0.0" value="{{.Position.Roll}}">
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Pitch"}}
-  <div class="col-sm-10">
-    <input type="number" class="form-control" id="pitchId" placeholder="0.0" value="{{.Position.Pitch}}">
-  </div>
-</div>
-<div class="custom-control custom-switch mt-4">
-  <input type="checkbox" class="custom-control-input" id="favoriteId" {{- if .Position.Favorite}}checked{{- end}}>
-  <label class="custom-control-label text-light h5" for="favoriteId">Favorite</label>
-</div>
-<button type="button" class="btn btn-primary btn-block mt-5" onclick="{{- if .Position.ID}}saveExistingPosition({{.Position.ID}}){{- else}}saveNewPosition(){{- end}}">Save</button>
+{{- template "inputText" params "nameId" "Name" .Position.Name "Enter position name"}}
+{{- template "inputNumber" params "rollId" "Roll" .Position.Roll}}
+{{- template "inputNumber" params "pitchId" "Pitch" .Position.Pitch}}
+{{- template "inputCheckbox" params "favoriteId" "Favorite" .Position.Favorite}}
+<button type="button" class="btn btn-primary btn-block mt-5" onclick="{{- if .Position.ID}}saveExistingPosition(){{- else}}saveNewPosition(){{- end}}">Save</button>
 {{- if .Position.ID}}
-  <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deleteModal">Delete</button>
-  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">Delete Position</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">Are you sure you want to delete this position?</div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger" onclick="deletePosition({{.Position.ID}})" data-dismiss="modal">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  {{- template "buttonConfirmation" "delete" "Delete" "Are you sure you want to delete this position?" "deletePosition()"}}
 {{- else}}
-  <button type="button" class="btn btn-secondary btn-block" onclick="refreshPosition()">Refresh</button>
+  {{- template "buttonMain" params "secondary" "Refresh" "refreshPosition()"}}
 {{- end}}
 <script>
-async function refreshPosition() {
-  const corrected = await getUrl('/api/corrected')
-  document.getElementById('rollId').value = corrected.roll
-  document.getElementById('pitchId').value = corrected.pitch
-}
-async function saveNewPosition() {
-  const position = getPositionFromEditor()
-  if (validatePosition(position)) {
-    const saved = await postUrl('/api/position', position)
-    window.location = '/position/' + saved.id
+  async function refreshPosition() {
+    const corrected = await getUrl('/api/corrected')
+    document.getElementById('rollId').value = corrected.roll
+    document.getElementById('pitchId').value = corrected.pitch
   }
-}
-async function saveExistingPosition(id) {
-  const position = getPositionFromEditor()
-  position.id = id
-  if (validatePosition(position)) {
-    await putUrl('/api/position/' + id, position)
+  async function saveNewPosition() {
+    const position = getPositionFromEditor()
+    if (validatePosition(position)) {
+      const saved = await postUrl('/api/position', position)
+      window.location = '/position/' + saved.id
+    }
   }
-}
-async function deletePosition(id) {
-  await deleteUrl('/api/position/' + id)
-  window.location = '/home'
-}
-function getPositionFromEditor() {
-  const name = document.getElementById('nameId').value;
-  const roll = parseFloat(document.getElementById('rollId').value);
-  const pitch = parseFloat(document.getElementById('pitchId').value);
-  const favorite = document.getElementById('favoriteId').checked;
-  return {
-    name: name,
-    roll: roll,
-    pitch: pitch,
-    favorite: favorite
+  async function saveExistingPosition() {
+    const position = getPositionFromEditor()
+    position.id = {{.Position.ID}}
+    if (validatePosition(position)) {
+      await putUrl('/api/position/{{.Position.ID}}', position)
+    }
   }
-}
-function validatePosition(position) {
-  if (position.name === '') {
-    displayAlert('alert-danger', 'Name is required', false)
-    return false
+  async function deletePosition() {
+    await deleteUrl('/api/position/{{.Position.ID}}')
+    window.location = '/home'
   }
-  return true
-}
+  function getPositionFromEditor() {
+    const name = document.getElementById('nameId').value;
+    const roll = parseFloat(document.getElementById('rollId').value);
+    const pitch = parseFloat(document.getElementById('pitchId').value);
+    const favorite = document.getElementById('favoriteId').checked;
+    return {
+      name: name,
+      roll: roll,
+      pitch: pitch,
+      favorite: favorite
+    }
+  }
+  function validatePosition(position) {
+    if (position.name === '') {
+      displayAlert('alert-danger', 'Name is required', false)
+      return false
+    }
+    return true
+  }
 </script>
 {{- template "footer"}}
 {{- end}}

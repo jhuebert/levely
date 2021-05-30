@@ -5,95 +5,53 @@ Expected:
 {{- define "preferences"}}
 {{- template "header"}}
 {{- template "pageTitle" "Preferences"}}
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Width"}}
-  <div class="col-sm-10">
-    <input id="dimensionWidthId" type="number" class="form-control" placeholder="0.0" value="{{.Preferences.DimensionWidth}}" />
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Length"}}
-  <div class="col-sm-10">
-    <input id="dimensionLengthId" type="number" class="form-control" placeholder="0.0" value="{{.Preferences.DimensionLength}}" />
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Units"}}
-  <div class="col-sm-10">
-    <select class="form-control" id="dimensionUnitsId" >
-      <option value="in" {{- if eq .Preferences.DimensionUnits "in"}}selected{{- end}}>Inches</option>
-      <option value="cm" {{- if eq .Preferences.DimensionUnits "cm"}}selected{{- end}}>Centimeters</option>
-    </select>
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Roll Axis"}}
-  <div class="col-sm-10">
-    <select class="form-control" id="orientationRollId" >
-      <option value="x" {{- if eq .Preferences.OrientationRoll "x"}}selected{{- end}}>X</option>
-      <option value="y" {{- if eq .Preferences.OrientationRoll "y"}}selected{{- end}}>Y</option>
-      <option value="z" {{- if eq .Preferences.OrientationRoll "z"}}selected{{- end}}>Z</option>
-    </select>
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Pitch Axis"}}
-  <div class="col-sm-10">
-    <select class="form-control" id="orientationPitchId" >
-      <option value="x" {{- if eq .Preferences.OrientationPitch "x"}}selected{{- end}}>X</option>
-      <option value="y" {{- if eq .Preferences.OrientationPitch "y"}}selected{{- end}}>Y</option>
-      <option value="z" {{- if eq .Preferences.OrientationPitch "z"}}selected{{- end}}>Z</option>
-    </select>
-  </div>
-</div>
-<div class="custom-control custom-switch mt-4">
-  <input type="checkbox" class="custom-control-input" id="orientationInvertRollId" {{- if .Preferences.OrientationInvertRoll}}checked{{- end}}>
-  <label class="custom-control-label text-light h5" for="orientationInvertRollId">Invert Roll</label>
-</div>
-<div class="custom-control custom-switch mt-4">
-  <input type="checkbox" class="custom-control-input" id="orientationInvertPitchId" {{- if .Preferences.OrientationInvertPitch}}checked{{- end}}>
-  <label class="custom-control-label text-light h5" for="orientationInvertPitchId">Invert Pitch</label>
-</div>
-<button type="button" class="btn btn-primary btn-block mt-5" onclick="savePreferences()">Save</button>
-<a class="btn btn-secondary btn-block" role="button" href="/api/preference/export" download>Export</a>
+{{- template "inputNumber" params "dimensionWidthId" "Width" .Preferences.DimensionWidth}}
+{{- template "inputNumber" params "dimensionLengthId" "Length" .Preferences.DimensionLength}}
+{{- template "inputDropdown" params "dimensionUnitsId" "Units" .Preferences.DimensionUnits "in" "cm"}}
+{{- template "inputDropdown" params "orientationRollId" "Roll Axis" .Preferences.OrientationRoll "x" "y" "z"}}
+{{- template "inputDropdown" params "orientationPitchId" "Pitch Axis" .Preferences.OrientationPitch "x" "y" "z"}}
+{{- template "inputCheckbox" params "orientationInvertRollId" "Invert Roll" .Preferences.OrientationInvertRoll}}
+{{- template "inputCheckbox" params "orientationInvertPitchId" "Invert Pitch" .Preferences.OrientationInvertPitch}}
+{{- template "buttonMain" params "primary" "Save" "savePreferences()"}}
+{{- template "buttonLink" "secondary" "Export" "/api/preference/export" "download"}}
 <script>
-async function savePreferences() {
-  const preferences = {}
-  preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthId').value)
-  preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthId').value)
-  preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
-  preferences.orientationRoll = document.getElementById('orientationRollId').value
-  preferences.orientationPitch = document.getElementById('orientationPitchId').value
-  preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
-  preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
-  const validationResult = validatePreferences(preferences)
-  if (validationResult) {
-    displayAlert('alert-danger', validationResult)
-    return
+  async function savePreferences() {
+    const preferences = {}
+    preferences.dimensionWidth = parseFloat(document.getElementById('dimensionWidthId').value)
+    preferences.dimensionLength = parseFloat(document.getElementById('dimensionLengthId').value)
+    preferences.dimensionUnits = document.getElementById('dimensionUnitsId').value
+    preferences.orientationRoll = document.getElementById('orientationRollId').value
+    preferences.orientationPitch = document.getElementById('orientationPitchId').value
+    preferences.orientationInvertRoll = document.getElementById('orientationInvertRollId').checked
+    preferences.orientationInvertPitch = document.getElementById('orientationInvertPitchId').checked
+    const validationResult = validatePreferences(preferences)
+    if (validationResult) {
+      displayAlert('alert-danger', validationResult)
+      return
+    }
+    await putUrl('/api/preference', preferences)
   }
-  await putUrl('/api/preference', preferences)
-}
-function validatePreferences(preferences) {
-  if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
-    return 'Width must be greater than zero'
+  function validatePreferences(preferences) {
+    if (!preferences.dimensionWidth || (preferences.dimensionWidth <= 0.0)) {
+      return 'Width must be greater than zero'
+    }
+    if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
+      return 'Length must be greater than zero'
+    }
+    if (!preferences.dimensionUnits) {
+      return 'Dimension unit not specified'
+    }
+    if (!preferences.orientationRoll) {
+      return "Roll axis is not set"
+    }
+    if (!preferences.orientationPitch) {
+      return "Pitch axis is not set"
+    }
+    if (preferences.orientationRoll === preferences.orientationPitch) {
+      return "Pitch and roll axis must not be the same value"
+    }
+    return null
   }
-  if (!preferences.dimensionLength || (preferences.dimensionLength <= 0.0)) {
-    return 'Length must be greater than zero'
-  }
-  if (!preferences.dimensionUnits) {
-    return 'Dimension unit not specified'
-  }
-  if (!preferences.orientationRoll) {
-    return "Roll axis is not set"
-  }
-  if (!preferences.orientationPitch) {
-    return "Pitch axis is not set"
-  }
-  if (preferences.orientationRoll === preferences.orientationPitch) {
-    return "Pitch and roll axis must not be the same value"
-  }
-  return null
-}
 </script>
 {{- template "footer"}}
 {{- end}}

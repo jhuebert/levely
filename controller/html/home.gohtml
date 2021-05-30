@@ -5,14 +5,13 @@ Expected:
 {{- define "home"}}
 {{- template "header"}}
 <a class="btn btn-lg btn-primary btn-block mb-4" role="button" href="/level"><div class="display-4">Level</div></a>
-{{- if not .Positions}}
+{{- range .Positions}}
+  {{- template "positionButton" .}}
+{{- else}}
   <div class="text-secondary text-center">You have no favorites</div>
-{{- else }}
-  {{- range .Positions}}
-    {{- template "positionButton" .}}
-  {{- end}}
 {{- end}}
-<a class="btn btn-lg btn-primary btn-block mt-4" role="button" href="/position">View All Positions</a>
-<a class="btn btn-lg btn-success btn-block" role="button" href="/position/new">Save Current Position</a>
+<!-- mt-4 -->
+{{- template "buttonLink" "primary" "View All Positions" "/position"}}
+{{- template "buttonLink" "success" "Save Current Position" "/position/new"}}
 {{- template "footer"}}
 {{- end}}

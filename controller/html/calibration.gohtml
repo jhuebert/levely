@@ -5,38 +5,10 @@ Expected:
 {{- define "calibration"}}
 {{- template "header"}}
 {{- template "pageTitle" "Calibration"}}
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Roll"}}
-  <div class="col-sm-10">
-    <input id="rollId" type="number" class="form-control" placeholder="0.0" value="{{.Position.Roll}}" />
-  </div>
-</div>
-<div class="form-group row align-items-center">
-  {{- template "formLabel" "Pitch"}}
-  <div class="col-sm-10">
-    <input id="pitchId" type="number" class="form-control" placeholder="0.0" value="{{.Position.Pitch}}" />
-  </div>
-</div>
-<button type="button" class="btn btn-primary btn-block mt-5" onclick="refreshCalibration()">Refresh</button>
-<button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#saveModal">Save</button>
-<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="saveModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="saveModalLabel">Update Calibration</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">Are you sure you want to update the calibration?</div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger" onclick="saveCalibration()" data-dismiss="modal">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{{- template "inputNumber" params "rollId" "Roll" .Position.Roll}}
+{{- template "inputNumber" params "pitchId" "Pitch" .Position.Pitch}}
+{{- template "buttonMain" params "primary" "Refresh" "refreshCalibration()"}}
+{{- template "buttonConfirmation" "save" "Save" "Are you sure you want to update the calibration?" "saveCalibration()"}}
 <script>
 async function refreshCalibration() {
   const uncorrected = await getUrl('/api/uncorrected')

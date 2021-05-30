@@ -146,15 +146,6 @@ Expected:
 
 <!--
 Expected:
-    ID
-    Name
--->
-{{- define "positionButton"}}
-<a class="btn btn-lg btn-secondary btn-block" role="button" href="/position/{{.ID}}/recall">{{.Name}}</a>
-{{- end}}
-
-<!--
-Expected:
     .
 -->
 {{- define "pageTitle"}}
@@ -162,11 +153,133 @@ Expected:
 <div class="row px-3" id="alert"></div>
 {{- end}}
 
-
 <!--
 Expected:
     .
 -->
 {{- define "formLabel"}}
 <label class="col-sm-2 col-form-label col-form-label-lg text-light">{{.}}</label>
+{{- end}}
+
+<!--
+Expected:
+  0 - ID
+  1 - Label
+  2 - Value
+  3 - Placeholder
+-->
+{{- define "inputText"}}
+<div class="form-group row align-items-center">
+  {{- template "formLabel" index . 1}}
+  <div class="col-sm-10">
+    <input type="text" class="form-control" id="{{index . 0}}" placeholder="{{index . 3}}" value="{{index . 2}}">
+  </div>
+</div>
+{{- end}}
+
+<!--
+Expected:
+  0 - ID
+  1 - Label
+  2 - Value
+-->
+{{- define "inputNumber"}}
+<div class="form-group row align-items-center">
+  {{- template "formLabel" index . 1}}
+  <div class="col-sm-10">
+    <input id="{{index . 0}}" type="number" class="form-control" placeholder="0.0" value="{{index . 2}}" />
+  </div>
+</div>
+{{- end}}
+
+<!--
+Expected:
+  0 - ID
+  1 - Label
+  2 - Value
+-->
+{{- define "inputCheckbox"}}
+<div class="custom-control custom-switch mt-4">
+  <input type="checkbox" class="custom-control-input" id="{{index . 0}}" {{- if index . 2}}checked{{- end}}>
+  <label class="custom-control-label text-light h5" for="{{index . 0}}">{{index . 1}}</label>
+</div>
+{{- end}}
+
+<!--
+Expected:
+  0  - ID
+  1  - Label
+  2  - Value
+  3+ - Options
+-->
+{{- define "inputDropdown"}}
+<div class="form-group row align-items-center">
+  {{- template "formLabel" {{index . 1}}}}
+  <div class="col-sm-10">
+    <select class="form-control" id="{{index . 0}}">
+      {{- range .Options}}
+        <option value="{{.}}" {{- if eq .OuterValue? .}}selected{{- end}}>{{.}}</option>
+      {{- end}}
+    </select>
+  </div>
+</div>
+{{- end}}
+
+<!--
+Expected:
+  0 - Color
+  1 - Label
+  2 - OnClick
+-->
+{{- define "buttonMain"}}
+<button type="button" class="btn btn-{{index . 0}} btn-block mt-5" onclick="{{index . 2}}">{{index . 1}}</button>
+{{- end}}
+
+<!--
+Expected:
+  0 - Color
+  1 - Label
+  2 - Link
+  3 - Download TODO
+-->
+{{- define "buttonLink"}}
+<a class="btn btn-lg btn-{{index . 0}} btn-block" role="button" href="{{index . 2}}">{{index . 1}} {{if .Download}}download{{end}}</a>
+{{- end}}
+
+<!--
+Expected: Might be able to merge this with buttonLink
+    ID
+    Name
+-->
+{{- define "buttonPosition"}}
+<a class="btn btn-lg btn-secondary btn-block" role="button" href="/position/{{.ID}}/recall">{{.Name}}</a>
+{{- end}}
+
+<!--
+Expected:
+  0 - ID
+  1 - Label
+  2 - Text
+  3 - OnClick
+-->
+{{- define "buttonConfirmation"}}
+<button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#{{index . 0}}Modal">{{index . 1}}</button>
+<div class="modal fade" id="{{index . 0}}Modal" tabindex="-1" role="dialog" aria-labelledby="{{index . 0}}ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{index . 0}}ModalLabel">{{index . 1}}?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">{{index . 2}}</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" onclick="{{index . 3}}" data-dismiss="modal">{{index . 1}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {{- end}}
