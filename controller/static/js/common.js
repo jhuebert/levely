@@ -1,6 +1,10 @@
 
 async function getUrls(urls) {
-  return await Promise.all(urls.map(url => fetch(url).then(r => r.json()).catch(err => console.error(err))))
+  return await Promise.all(
+    urls.map(url => fetch(url)
+      .then(r => r.json())
+      .catch(err => console.error(err)))
+  )
 }
 
 async function getUrl(url) {
@@ -10,9 +14,9 @@ async function getUrl(url) {
 
 function putUrl(url, body) {
   return fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-    })
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
     .then(r => r.json())
     .then(r => {
       displayAlert('alert-success', 'Update success', true)
@@ -27,9 +31,9 @@ function putUrl(url, body) {
 function postUrl(url, body) {
   console.log(`Creating ${url} with ${JSON.stringify(body)}`)
   return fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
     .then(r => r.json())
     .then(r => {
       displayAlert('alert-success', 'Create success', true)
@@ -44,8 +48,8 @@ function postUrl(url, body) {
 function deleteUrl(url) {
   console.log(`Deleting ${url}`)
   return fetch(url, {
-      method: 'DELETE'
-    })
+    method: 'DELETE'
+  })
     .then(r => {
       displayAlert('alert-success', 'Delete success', true)
       return r

@@ -22,7 +22,7 @@ var templateFiles embed.FS
 
 func New(s *service.Service) (Controller, error) {
 	logrus.Info("parsing templates")
-	t, err := template.ParseFS(templateFiles, "html/*.gohtml")
+	t, err := template.ParseFS(templateFiles, "html/page/*.gohtml", "html/base/*.gohtml")
 	return Controller{s, t}, err
 }
 

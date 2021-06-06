@@ -1,0 +1,70 @@
+{{define "recall"}}
+
+{{template "header"}}
+
+{{if .Position}}
+  {{template "pageTitle" .Position.Name}}
+{{else}}
+  {{template "pageTitle" "Level"}}
+{{end}}
+
+<div class="row h-25 align-items-center mb-2">
+  <div class="col">
+    <div class="container text-light text-center p-0">
+      <div class="row h3">
+        <div class="col">Roll</div>
+      </div>
+      <div class="row no-gutters align-self-center h1">
+        <div class="col" id="rollLeftId"></div>
+        <div class="col-8" id="rollProgressId"></div>
+        <div class="col" id="rollRightId"></div>
+      </div>
+      <div class="row no-gutters h6">
+        <div class="col">Left</div>
+        <div class="col-8 h3" id="rollDistanceId">0.0 {{.Preferences.DimensionUnits}}</div>
+        <div class="col">Right</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row h-25 align-items-center mb-3">
+  <div class="col">
+    <div class="container text-light text-center p-0">
+      <div class="row h3">
+        <div class="col">Pitch</div>
+      </div>
+      <div class="row no-gutters align-self-center h1">
+        <div class="col" id="pitchLeftId"></div>
+        <div class="col-8" id="pitchProgressId"></div>
+        <div class="col" id="pitchRightId"></div>
+      </div>
+      <div class="row no-gutters h6">
+        <div class="col">Front</div>
+        <div class="col-8 h3" id="pitchDistanceId">0.0 {{.Preferences.DimensionUnits}}</div>
+        <div class="col">Rear</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{if .Position}}
+  <div class="row">
+    <div class="col">
+      <a class="btn btn-lg btn-primary btn-block" role="button" href="/position/{{.Position.ID}}">Edit</a>
+    </div>
+  </div>
+{{end}}
+
+<script>
+  const config = {{.Config}}
+  const preferences = {{.Preferences}}
+  {{if .Position}}
+    const position = {{.Position}}
+  {{end}}
+</script>
+
+<script src="/static/js/recall.js"></script>
+
+{{template "footer"}}
+
+{{end}}
