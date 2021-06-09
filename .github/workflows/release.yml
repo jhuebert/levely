@@ -1,0 +1,24 @@
+name: Release binaries
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # - name: Run tests
+        # run: go test -v -p=1 -timeout=0 ./...
+      - uses: wangyoucao577/go-release-action@v1.16
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: linux
+          goarch: arm
+          goarm: 6
+          project_path: "."
+          binary_name: "levely"
+          ldflags: "-s -w"
+          extra_files: LICENSE README.md
