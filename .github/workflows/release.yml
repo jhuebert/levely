@@ -13,6 +13,7 @@ jobs:
       - uses: wangyoucao577/go-release-action@v1.18
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          goversion: "https://dl.google.com/go/go1.16.5.linux-amd64.tar.gz"
           goos: linux
           goarch: arm
           pre_command: "export GOARM=6"
