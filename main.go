@@ -77,7 +77,7 @@ func main() {
 		IdleTimeout:  viper.GetDuration(config.ServerIdleTimeout),
 	}
 
-	// Run our server in a goroutine so that it doesn't block.
+	// Run the server in a goroutine so that it doesn't block
 	go func() {
 		logrus.Info("starting server")
 		if err := srv.ListenAndServe(); err != nil {
@@ -85,19 +85,19 @@ func main() {
 		}
 	}()
 
-	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
-	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
+	// Accept graceful shutdowns when quit via SIGINT (Ctrl+C)
+	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-	// Block until we receive our signal.
+	// Block until we receive the signal
 	<-c
 
-	// Create a deadline to wait for.
+	// Create a deadline to wait for
 	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration(config.ServerStopTimeout))
 	defer cancel()
 
-	// Doesn't block if no connections, but will otherwise wait until the timeout deadline.
+	// Wait for connections or force shutdown if the timeout expires
 	err = srv.Shutdown(ctx)
 	if err != nil {
 		logrus.Error(err)
@@ -106,9 +106,6 @@ func main() {
 	logrus.Infof("closing database connection")
 	r.Close()
 
-	// Optionally, you could run srv.Shutdown in a goroutine and block on
-	// <-ctx.Done() if your application should wait for other services
-	// to finalize based on context cancellation.
 	logrus.Info("shutting down")
 	os.Exit(0)
 }

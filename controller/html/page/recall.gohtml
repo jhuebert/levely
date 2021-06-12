@@ -1,11 +1,9 @@
 {{define "recall"}}
 
-{{template "header"}}
-
 {{if .Position}}
-  {{template "pageTitle" .Position.Name}}
+  {{template "header" .Position.Name}}
 {{else}}
-  {{template "pageTitle" "Level"}}
+  {{template "header" "Level"}}
 {{end}}
 
 <div class="row h-25 align-items-center mb-2">
@@ -66,5 +64,4 @@
 <script src="/static/js/recall.js"></script>
 
 {{template "footer"}}
-
 {{end}}

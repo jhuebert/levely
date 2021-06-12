@@ -1,15 +1,11 @@
 {{define "positionList"}}
-
-{{template "header"}}
-
-{{template "pageTitle" "Positions"}}
+{{template "header" "Positions"}}
 
 {{range .Positions}}
-  {{template "positionButton" .}}
+  <a class="btn btn-lg btn-secondary btn-block" role="button" href="/position/{{.ID}}/recall">{{.Name}}</a>
 {{else}}
   <div class="text-secondary text-center">You have no saved positions</div>
 {{end}}
 
 {{template "footer"}}
-
 {{end}}
