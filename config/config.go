@@ -16,6 +16,7 @@ const (
 
 	DisplayLevelTolerance string = "display.level.tolerance"
 	DisplayUpdateRate     string = "display.update.rate"
+	DisplaySseEnabled     string = "display.sse.enabled"
 
 	AccelerometerI2CAddress        string = "accelerometer.i2c.address"
 	AccelerometerUpdateSleepWait   string = "accelerometer.update.sleep.wait"
@@ -37,7 +38,7 @@ func init() {
 	// set web server defaults
 	viper.SetDefault(ServerAddress, ":8080")
 	viper.SetDefault(ServerReadTimeout, "5s")
-	viper.SetDefault(ServerWriteTimeout, "5s")
+	viper.SetDefault(ServerWriteTimeout, "60s")
 	viper.SetDefault(ServerIdleTimeout, "60s")
 	viper.SetDefault(ServerStopTimeout, "15s")
 	viper.SetDefault(ServerCachePeriod, "1h")
@@ -48,15 +49,16 @@ func init() {
 	// set display defaults
 	viper.SetDefault(DisplayLevelTolerance, "0.1")
 	viper.SetDefault(DisplayUpdateRate, "4")
+	viper.SetDefault(DisplaySseEnabled, "true")
 
 	// set accelerometer defaults
 	viper.SetDefault(AccelerometerI2CAddress, "0x68")
 	viper.SetDefault(AccelerometerUpdateSleepWait, "2s")
 	viper.SetDefault(AccelerometerUpdateSleepPeriod, "500ms")
-	viper.SetDefault(AccelerometerUpdatePeriod, "1ms")
+	viper.SetDefault(AccelerometerUpdatePeriod, "2ms")
 
 	// set accelerometer filter defaults
 	viper.SetDefault(AccelerometerFilterSelected, "average")
-	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "500")
-	viper.SetDefault(AccelerometerFilterAverageSize, "2000")
+	viper.SetDefault(AccelerometerFilterSmootherSmoothing, "250")
+	viper.SetDefault(AccelerometerFilterAverageSize, "1000")
 }

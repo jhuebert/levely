@@ -61,7 +61,14 @@ function displayUpdate() {
 document.getElementById('rollProgressId').innerHTML = createProgress(0)
 document.getElementById('pitchProgressId').innerHTML = createProgress(0)
 
-setInterval(
-    () => displayUpdate(),
-    1000.0 / config.displayUpdateRate
-)
+if (config.displaySseEnabled && (typeof (EventSource) !== "undefined")) {
+    var source = new EventSource("/api/corrected/event");
+    source.onmessage = function (event) {
+        updateLevel(JSON.parse(event.data))
+    };
+} else {
+    setInterval(
+        () => displayUpdate(),
+        1000.0 / config.displayUpdateRate
+    )
+}
