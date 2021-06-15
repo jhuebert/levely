@@ -56,9 +56,7 @@
 <script>
   const config = {{.Config}}
   const preferences = {{.Preferences}}
-  {{if .Position}}
-    const position = {{.Position}}
-  {{end}}
+  const position = {{if .Position}}{{.Position}}{{else}}{"pitch": 0.0,"roll": 0.0}{{end}}
 </script>
 
 <script src="/static/js/recall.js"></script>
