@@ -46,12 +46,13 @@ echo 1 | sudo tee /sys/class/leds/led0/brightness
 # Schematic
 
 # Running
+```
 Usage of levely:
   -c string
         path to the config file
   -d string
         path to the database file (default "levely.db")
-
+```
 
 # Configuration
 Designed to be run without any modifications, but some installations might want to customize some of the properties. Sane defaults were selected for all properties and only those that need to be modified should be changed. If a default value is not working for most people, we should change it.
