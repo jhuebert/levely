@@ -60,7 +60,7 @@ Configuration can stored in JSON, TOML, YAML, HCL, envfile or Java properties fi
 
 ## General
 
-### log.level
+### `log.level`
 Specifies the level of logging that the program should output to standard out. The default log level is `info`. This will normally not need to be changed, but setting the log level to `debug` can assist in troubleshooting issues.
 
 #### Values
